@@ -1,2 +1,3 @@
 # Stat5400
-Applied Statistic for Data Science 
+Applied Statistics for Data Science 
+Here is the course work I have done in State5400 course
