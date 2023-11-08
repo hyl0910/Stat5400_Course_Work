@@ -1,0 +1,325 @@
+---
+title: "Homework3"
+author: "Hei Yee Lau Hayley"
+date: "2023-09-18"
+output: html_document
+---
+
+**Question 1**
+
+**(a) Find the z-score z.025, i.e., the value of the N(0,1) variable Z such that the area under the curve below z.025 is 0.025.**
+
+```{r}
+qnorm(0.025)
+```
+
+**(b) Find z0.975.**
+
+```{r}
+qnorm(0.975)
+```
+
+**(c) Find the critical value you will use for constructing a 95% C.I. for u1-u2 based on two independent samples of sizes n1=11 and n2=13 drawn from two normal populations with equal variances.**
+ 
+```{r}
+n1 <- 20  
+n2 <- 25  
+alpha <- 0.05
+df <- n1 + n2 - 2
+qt(1 - alpha / 2, df)
+```
+The critical value based on two independent samples of sozes n1=11 and n2=13 is 2.016692.
+
+**(d) Find the value of X2 corresponding to 1-a = 0.95 when the d.f. is 17.**
+
+```{r}
+qchisq(0.95, 17)
+```
+
+The X2 value is 27.58711
+
+**(e) Find the F-value corresponding to 1-a = 0.95 when the numerator d.f. is 4, and the denominator d.f. is 18.**
+
+```{r}
+qf(0.95, 4,18)
+```
+
+The F-value corresponding to 1-a =0.95 when the numberator d.f. is 4 and the denominator d.f.is 18 is 2.927744.
+
+**Question 2**
+
+**Consider the Arthritis data from the R package vcd. Combine the levels Some and Marked in the Improvement status, to produce a 2x2 table, which has two response levels, None and Improved.**
+
+**(a) Cross-tabulate the number of patients by the variables treatment and improvement in the resulting 2x2 table, showing row and column sums.**
+
+```{r}
+library (vcd)
+library(grid)
+data(Arthritis)
+Arthritis$Improved <- ifelse(Arthritis$Improved %in% c("Some", "Marked"), "Improved", "None")
+cross_table <- table(Arthritis$Treatment, Arthritis$Improved)
+cross_table
+```
+
+```{r}
+#show the row and column sum
+addmargins(cross_table)
+```
+
+In the above table, we can see that there are 43 cases by Placebo and 14 patients are get improved and 29 patients get none improved. There are 28 cases by Treated, which 28 patients get improved and 13 patients get none improved.
+
+Overall, there are 84 cases, 42 patients get improved and 42 patients do not get any improvement.
+
+
+**(b) Let π1|1 and π1|2 respectively denote the true proportions of Improved patients in the Treated and Placebo groups respectively. Compute and interpret the sample estimates of π1|1 and π1|2.**
+
+```{r}
+p_p<-cross_table[1, 1] / sum(cross_table[1, ])
+p_t<-cross_table[2, 1] / sum(cross_table[2, ])
+
+cat("Sample estimate of Improved status among Treated patients:",p_t , "\n")
+cat("Sample estimate of Improved status among Placebo patients:",p_p , "\n")
+```
+Let π1|1 and π1|2 respectively denote the true proportions of Improved patients in the Treated and Placebo groups respectively.
+From the above result, we can see that the sample estimates of improved patients in the Treated is 0.6829268 and that of improved patients in the Placebo patients is 0.3255814.
+
+**(c) Obtain a 95% C.I. estimate of π1|1 - π1|2. How can this interval help you decide whether the true proportions are equal?**
+
+If we obtain a 95% C.I. estimate of π1|1 - π1|2, it provides a range of values within which we can be reasonably confident that the true difference between the proportions of "Improved" patients in the "Treated" and "Placebo" group lies. And we can use the 95% confidence interval for π1|1 - π1|2 to calculate the lower and upper bound of the 95% Confidence Interval for π1|1 and π1|2.
+
+```{r}
+
+n_p<-sum(cross_table[1, ])
+n_t<-sum(cross_table[2, ])
+
+standard_error <- sqrt((p_t * (1 - p_t) / n_t) + (p_p * (1 - p_p) / n_p))
+Z <- qnorm((1 + 0.95) / 2)
+margin_of_error <- Z * standard_error
+lower_bound <- (p_t - p_p) - margin_of_error
+upper_bound <- (p_t - p_p) + margin_of_error
+
+# Print the 95% CI
+cat("95% Confidence Interval for π1|1 - π1|2:", lower_bound, "to", upper_bound)
+```
+
+If the internal contains zero, it suggests that there may not be a statistically significant difference in the proportions of Imporved patients between tow groups. However,of the interval does not contain zero, it suggests a significant difference in the proportions of Improved patients between the Treated and Placebo groups.
+
+Since the result of CI at 95% is between 0.1575841 and 0.5571068, which is not include 0. It suggested that there is a significant difference in the proportions of Improved patients between the Treated and Placebo groups.
+
+**(d) Carry out a two-sided hypothesis test H0=π1|1 - π1|2 at the 5% level of significance. Interpret the decision, and relate it to your result from (c).**
+
+```{r}
+# Calculate the pooled proportion
+p_pooled <- (n_t * p_t + n_p * p_p) / (n_t + n_p)
+
+# Calculate the standard error of the difference
+standard_error <- sqrt(p_pooled * (1 - p_pooled) * ((1 / n_t) + (1 / n_p)))
+
+# Calculate the test statistic (Z)
+Z <- (p_t - p_p) / standard_error
+
+# Significance level (alpha)
+alpha <- 0.05
+
+# Calculate the critical values for a two-sided test
+critical_value_lower <- qnorm(alpha / 2)
+critical_value_upper <- qnorm(1 - alpha / 2)
+
+# Calculate the confidence interval
+confidence_interval_lower <- (p_t - p_p) - critical_value_upper * standard_error
+confidence_interval_upper <- (p_t - p_p) + critical_value_upper * standard_error
+
+# Conduct the hypothesis test
+p_value <- 2 * (1 - pnorm(abs(Z)))
+
+# Print the results
+cat("Test Statistic (Z):", Z, "\n")
+cat("P-Value:", p_value, "\n")
+cat("Confidence Interval:", confidence_interval_lower, "to", confidence_interval_upper, "\n")
+
+```
+
+The Test Statistic (Z) measures how mant standard errors the observed difference in proportion is away from the hypothesized difference.
+
+From the above result, we can see that the test statistic (Z) is 3.27. And the p-value is 0.0011, which is smaller than the alpha (0.05). At the 95% of C.I. (0.1434, 0.5713), we have sufficient evidence to reject the Null hypothesis and accept the alternative hypothesis. We concluded that there is a significant difference between the proportion of 'Improved' patients in the Treated and Placebo groups. 
+
+Compare to the result in (c), we can see that the result is the same that there is a significant difference between the proportion of 'Improved' patients in the two group.
+
+**Question 3**
+
+**Consider the Arthritis data from the R package vcd. As you did in Q2, combine the levels Some and Marked in the Improvement status, to produce a 2x2 table, which has two response levels, None and Improved.**
+
+**(a) Compute and interpret w^1 and w^2 where Yes corresponds to Improved status.**
+
+```{r}
+w1<-p_t/(1-p_t)
+w2<-p_p/(1-p_p)
+#Calculate the sample odds
+cat("w1 (Yes - Improved status among Treated patients):", w1, "\n")
+cat("w2 (Yes - Improved status among Placebo patients):", w2, "\n")
+```
+The sample odds (w1 and w2) represent the odds of improvement among patients  in the treated and placebo groups respectively. These odds are calculated by dividing the proportion of patients with "Improved" status by the proportion of patients with "None"status for each group.
+
+Since the w1 (the sample odds for treated patents) is greater than w2 (the sample odds for placebo patients), it suggests that patients who received the treatment had higher odds of improvement compared to those who received the placebo.
+
+Comparing the sample odds w1 and w2 allows us to assess the relative odds of improvement between the two groups and make inferences about the effectiveness of the Treatment compared to the Placebo. Since the sample odds of Treatment is higher than that of Placebo, we can suggest that the result of Treatment is more effective than that of Placebo.
+
+
+**(b) Obtain and interpret the sample odds ratio. Hint: look at the R package epitools.**
+
+```{r}
+library(epitools)
+contingency_table <- cross_table
+
+# Calculate the odds ratio for Treatment divided by Improved
+odds_ratio_result <- (contingency_table[2, 1] / contingency_table[2, 2]) / (contingency_table[1, 1] / contingency_table[1, 2])
+
+# Print the odds ratio
+cat("The odds ratio is:", odds_ratio_result,"\n\n")
+
+oddsratio(cross_table)
+
+```
+The odds ratio turns out to be 4.4615 from w1/w2 or 0.2299601 from w2/w1. We would interpret this to mean that the odds that a patient get improved status by Placebo are just .2299601 times the odds that a patient get improved status by Treated. 
+
+In other words, the odds that a patient get improved by Treated are actually lowered by about 77% by Placebo. Treated has more significant improve effect than Placebo.
+
+We can also use the values in the lower and upper columns of the output to construct the following 95% confidence interval for the odds ratio:
+
+95% confidence interval for the odds ratio (0.0885, 0.5668)
+
+We are 95% confident that the true odds ratio between Treated and Placebo is contained in this interval.
+
+The midp.exact column in the output also display the p-value associated with the odds ratio.
+
+This p-value turns out to be 0.001233025. Since the value is less than the significant level (0.05), we would conclude that the odd ratio is statistically significant. In other words, we know from the odds ratio that the odds of a patient getting improved by Treated are lower than the odds of by Placebo, and the difference between these odds is actually statistically significant.
+
+
+**Question 4** 
+**Consider the dataset tensile from the R package ACSWR.**
+
+**(a) Verify graphically whether the levels of CWP have an effect on tensile strength.**
+
+```{r}
+library(ACSWR)
+data(tensile)
+CWPSize <- cut(tensile$CWP, breaks = quantile(tensile$CWP, probs = c(0, 0.2, 0.4, 0.6, 0.8, 1)),labels = c("A", "B", "C", "D", "E"), right = T,include.lowest = TRUE)
+table(CWPSize)
+
+```
+```{r}
+strength<- data.frame(logStr=log10(tensile$Tensile_Strength), tensile$CWP, CWPSize)
+```
+
+```{r}
+library("BSDA")
+library("car")
+library(gridExtra)
+library(ggplot2)
+ggplot(strength, aes(x=CWPSize, y=logStr, fill=CWPSize)) +geom_boxplot(show.legend = F)
+```
+
+From the above boxplot, we can see that there are difference variance between 5 levels of CWP because the box size of 5 CWP levels are totally different and the median are all different. And the distribution of Tensile Strength in each CWP level is significantly different from each other since 5 of the box are located in different level of Tensile strength which shown in the graph.
+
+
+**(b) Use Bartlett’s test and Levene’s test to verify equality of variances of the five populations. In what way are these two tests different? Do they corroborate what side-by-side boxplots tell you?**
+
+Bartlett's Test and Levene's Test are both used to assess the equality of variances among multiple groups or populations.
+
+Bartlett's Test assumes that the populations being compared are normally distributed. Levene's Test is sensitive to departures from normality and is considered robust against non-normality.
+```{r}
+leveneTest(logStr ~ CWPSize, data = strength)
+```
+```{r}
+bartlett.test(logStr ~ CWPSize, data = strength)
+```
+Differences between Bartlett's Test and Levene' Test:
+
+Bartlett's Test assumes that the populations being compared are normally distributed, whereas Levene's Test is less sensitive to deviations from normality.
+
+Bartlett's Test is sensitive to departures from normality, making it more appropriate when you have normally distributed data. Levene's Test is often used when the normality assumption is in doubt or when dealing with non-normal data.
+
+Bartlett's Test and Levene's Test provide a formal statistical assessment of variance equality among groups, whereas boxplots offer a visual inspection of the spread of data.
+The tests can corroborate the findings from boxplots.Since the p-value from the Levene's Test and Bartlett's Test are larger than 0.05, it suggests that there is no significant evidence to reject the null hypothesis that the variances are equal among the groups being compared. It aligns with observing different spreads in the boxplots for different "CWP" levels. 
+
+However, those results are not match with the result in (a). In (a), we have suggested that 5 CWP levels have different variance and distribution. It might because boxplots are graphical representations of the data distribution. They provide a visual summary of how data is spread out, including the presence of outliers and the skewness of data. Sometimes, even if variances are statistically equal, the visual inspection of the boxplots might suggest otherwise if there are outliers or non-normal data. 
+
+Moreover, sometimes, tests like Levene's test and Bartlett's test may provide robust results even when there are minor deviations from homoscedasticity, especially if the sample sizes are balanced and the data distribution is not severely skewed.
+
+**(c) Write out the null and alternative hypotheses to test whether the mean tensile strengths are the same for each level of CWP.**
+
+The Null hypothesis (H0): All the 5 groups of mean are equal.u1=u2=u3=u4=u5. There is no significant difference in the mean tensile strengths among the different levels of "CWP". 
+
+The Alternative hypothesis (H1): Not all means μi are equal. There is significant difference in the mean tensile strengths among at least two "CWP" level. In other words, at least one population mean for a "CWP" level is different fro the others. 
+
+**(d) Fit a one-factor ANOVA model to explain tensile strength as a function of the levels of CWP Use the F-test to verify whether there is a difference between the levels of CWP on mean tensile strength.**
+
+```{r}
+aovmod <- aov(logStr ~ CWPSize, data = strength)
+summary(lm(aovmod))
+```
+The F-statistic is 11.78 and the p-value for the overall model is 4.413e-05. Since the p-value is smaller than the significant level (0.05), we have sufficient evidence to reject the Null hypothesis and accept the alternative hypothesis. It suggested that there is a significant difference in mean tensile strength among at least two of the levels of "CWP." 
+
+From the coefficient fro each independent variable in the model, we can see that the p-value of CWPSizeE is greater than the significant level which show that there is significant effect of CWPSize E on the Tensile Strength.
+
+Moreover, there are the differences between the observed values and the predicted vales which is 0.09816. It shows that the model's predictions are generally close to the observed data points, suggesting a better fit
+
+**(e) Discuss normality of the residuals from the model in (c) graphically and using a significance test.**
+
+```{r}
+aovfits <- fitted(aovmod)
+```
+
+```{r}
+aovres <- residuals(aovmod)
+```
+
+
+We will do a normal Q-Q plot for check the normality assumption. In the following normal Q-Q plotof the resudual susing the car::qqplot()function, we can see that the residuals seem to fall along a straight line.
+
+```{r}
+car::qqPlot(aovres, main = NA, pch = 19, col = 2, cex = 0.7)
+```
+
+The large p-value that greater than the significant level (0.05) from the Shapiro-Wilk significant test for the normality validates the normality assumption. We can see that from the following result, the p-value is 0.5854, which is greater than the significant level and prove the normality.
+
+```{r}
+shapiro.test(aovres)
+```
+
+```{r}
+pred.CWPSize<-expand.grid(CWPSize=unique(strength$CWPSize))
+lsmeans<-predict(aovmod, newdata=pred.CWPSize, se=TRUE, interval='confidence')
+cbind(pred.CWPSize, lsmeans$fit)
+```
+
+The 'fit' column in the above result represents the predicted means of the response variable for each level of "CWPSize". The mean for each level of "CWPSize" represents the tesile strength for that specific level based on the linear model. We can see that CWPSize B get the highest predicted means and CWPSize A get the lowest predicted means in the model. However, the fit value of all the five CWP level is similar.
+
+```{r}
+pairwise.t.test(strength$logStr, strength$CWPSize,p.adjust.method = "none")
+```
+
+```{r}
+TukeyHSD(aovmod)
+```
+
+In the above result, we first can see the "diff" column which provides the estimatd difference in means between the two group being compared. A positive value indicates that the first group has a higher mean than the second group, which are all the groups excepted group of E-B,E-C and E-D. 
+
+For the p-value to different group, group of B-A, C-A, D-A, E-C and E-D have the higher p-value than te significant level, which suggested that there is a significant difference between the means of the compared groups.
+
+**Question 5 **
+
+**Using an example, describe what we mean by cherry-picking in statistical analysis, and in what ways this can be unethical practice.**
+
+Cherry picking in statistical analysis refers to the selective and biased presentation or manipulation of data to support a specific hypothesis, argument, or conclusion while ignoring or omitting data that contradicts or weakens the desired outcome. It involves choosing data or results that are favorable to the researcher's preconceived notions or objectives, while disregarding inconvenient or contradictory information. 
+
+Here is an example, suppose there is a Healthcare company is conducting clinical trials on a new health products. After multiple time of trials, the company discover that the product has no statistically significant effect or improve on the targeted health condition in most patients. However, in one subgroup of patients, there  is a small statically significant improvement in their health condition. It is a minor and specific case. And since the company want to publish this product so much, instead of reporting the overall results of all trials, they decided to disclose the result of the subgroup patient to show that the product is actually help to improve patient's health condition and having a significant effect on it. But we all know that it is not the truth. This selective reporting is Cherry-picking and it will mislead the regulators, patients and public that to believe that the product is effective than it truly is.
+
+This will lead to the unethical because they have omit the patient safety. Patients may choose the product based on the selective presentation of data and believing this product can improve their health condition effectively. However, since the company do not disclose the overall result of all trials, this can jeopardize patient safety that they have not adequately communicated the product's risk. Moreover, it would also harm to scientific integrity because Cherry-picking undermines the integrity of scientific research. It distorts the true picture of the product's effectiveness and making it difficult for other replicate the findings and make advance research for the scientific knowledge. For example, if there is another company would also like to produce same type of healthcare product and make reference on this company statistic data, since it is not the truly reflect the overall result, it might make the other company hard to make progress or even stuck, which is a really irresponsible action to the public. 
+
+
+
+
+
+
+

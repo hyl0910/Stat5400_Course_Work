@@ -1,0 +1,430 @@
+---
+  title: "HW5"
+author: "Hei Yee Lau Hayley"
+date: "2023-10-03"
+output: html_document
+---
+  
+  Q1. The dataset which is also available in the attached file kchouse.csv, can be downloaded from Kaggle here: https://www.kaggle.com/harlfoxem/housesalesprediction
+
+The dataset contains house sale prices for King County, Washington State, USA that were sold between May 2014 and May 2015. We are interested in understanding whether the price of a house depends on the area of the living room.
+```{r}
+library(tidyverse)
+setwd("C:/STAT_5405/Stat_HW")
+data<-read.csv('kchouse.csv')
+```
+a. Construct and interpret a scatterplot of house prices versus area of the living room.
+```{r}
+library(ggplot2)
+
+ggplot(data, aes(x = sqft_living, y = price)) +
+  geom_point() +
+  labs(x = "Living Room Area (sqft)", y = "House Price ($)") +
+  ggtitle("Scatterplot of House Prices vs. Living Room Area")
+```
+In the scatterplot, we can see most of the data point is fall in the lower left corner, which is between 0 to 5000 living room area and we can hardly to see any pattern in the plot. All of the points are concentrated in one place and some of them. However, we still can see that there is a positive correlation between house price and living area.
+
+
+b. Show that the log transform of house prices has a linear relation with the living room area.
+
+```{r}
+ggplot(data, aes(x = sqft_living, y = log(price))) +
+  geom_point() +
+  labs(x = "Living Room Area (sqft)", y = "Log House Price") +
+  ggtitle("Scatterplot of Log House Prices vs. Living Room Area")
+```
+
+In the scatterplot, we will see individual data points each representing a house. We can visually assess the relationship between living room area and house price. There is a generally upward tread, which suggested a positive correlation between House price and the Area of living room. Generally, according to the plot, when the area of living room increase, the house price would be increase. However, there is also a outlier above the trend that scattered randomly and not following the pattern. 
+
+```{r}
+x<-data$price
+y<-data$sqft_living
+z<-log(x)
+SLR_log<-lm(log(x)~y)
+summary(SLR_log)
+```
+
+Null hypothesis: sqft_living has no significant effect to the house price.
+
+Alternative hypothesis: sqft_living has significant effect to the house price.
+
+We can see that in the regression model, the p-value is smaller than the significant level, which suggested that we will accept the alternative hypothesis that house price is linear relation to the living room area. However, the R-square of log price is only 0.3785, which indicated that the variance of log price is 37.85% explained by living room area in this model. It is quite low and suggested that this model is not a better fit.
+
+The intercept is estimated to be approximately 12.22. This represents the predicted log price when the living room area is zero, which might not be meaningful in reality because living area is unlikely to be zero. In log transformed model, this can be interpreted as the estimated log price of a house with no living area 
+
+c. Compute and interpret the simple correlation coefficient between the log transform of house prices and living room area. Discuss whether this is a meaningful statistic. Hint Look at the scatterplot of log house prices versus living room area.
+```{r}
+correlation_coefficient <- cor(y, log(x),method='pearson')
+cat('Correlation Coefficient:', correlation_coefficient)
+```
+
+A correlation coefficient of 0.695 suggests a moderately strong positive linear relationship between the log-transformed house price and the living room area. This means that as the living room area tends to increase, log transformed house prices tend to increase. Moreover, a value of 0.695 correlation coefficient indicates a relatively strong positive correlation, but there might be still some variation because it is not 100%.
+
+In summary, the above result showed that this is a meaningful statistic and indicated that there is significant positive relationship between the log-transformed house price and the area of living room. 
+
+d. Fit an SLR model to explain log prices as a function of living room area. Interpret the intercept and slope of the fitted line. What does the fitted model say about the relation between (i) log price and living room area, and (ii) price and living room area
+
+```{r}
+SLR_log<-lm(log(x)~y)
+summary(SLR_log)
+```
+
+```{r}
+SLR<-lm(x~y)
+summary(SLR)
+```
+The fitted model provides insights into the relationship between both log price and actual price (price) and the living room area:
+  
+  (i)Log price and living room area:
+  
+  
+  The model that explains log price as a function of living room area is represented as: log(x) = 12.22 + 0.0003987*y
+
+This means that for each additional square foot increase in the living room area, the log price is expected to increase by approximately 0.0003987 units. In other words, there is a linear relationship between the natural logarithm of the house price and the living room area, and this relationship suggests that larger living areas are associated with higher log prices.
+
+(ii)Actual price and living room area:
+  
+  The model that explains actual price as a function of living room area is represented as: x=-43,580.743+280.624*y
+
+The intercept term (-43,580.743) represents the estimated price of houses with no living area. However, this interpretation is not practically meaningful because houses with no living area are unlikely to exist.
+
+The coefficient for the living room area is 280.64, indicating that for each additional square foot increase in the living room area, the actual price is expected to increase by approximately 2280.64 dollars. In the context, it suggests that larger living room area are associated with higher actual prices.
+
+In conclude, for log price and living room or actual price and living room area, there are also a positive linear relationship, larger living room areas are associated with higher actual prices. However, for the actual price and living room area, the interpretation of the intercept for actual prices may not practically meaningful because it represents the price of houses with no living area.
+
+e. Verify whether the assumptions of constant variance and normality are satisfied.
+```{r}
+library(car)
+plot(SLR, which = 1)
+ncvTest(SLR)
+```
+
+From the Residuals vs. Fitted Values plot, we can see that the points are not evenly distributed and randomly scattered around the horizontal line. We can observe a funnel-shape pattern in spread as the fitted value change, which suggested violate the assumption of constant variance. We can take the ncv test for further evidence.
+
+Null hypothesis: The data satisfy the assumption of constant variance
+Alternative hypothesis: The data do not satisfy the assumption of constant variance
+
+We can also see the non-constant variance score test that the p-value is smaller than the significant level (0.05) which suggested we have enough evidence to reject the Null hypothesis and accept the alternative hypothesis. The data do not satisfy the assumption of constant variance.
+
+Therefore, it indicates heteroscedasticity, which violates the assumption of constant variance
+
+```{r}
+library(nortest)
+hist(SLR$residuals, breaks = 20, main = "Histogram of Residuals")
+
+# Create a Q-Q plot of residuals
+qqnorm(SLR$residuals)
+qqline(SLR$residuals)
+ad.test(residuals(SLR))
+
+```
+
+Null hypothesis: The data in model is normally distributed.
+
+Alternative Hypothesis: The data in model is not normally distributed.
+
+From the histogram, we can see that the shape is not in bell shape and most of the data are focus on the right hand side, which is not normally distributed.
+
+In the normal Q-Q plot, we can see that there are a lots of points not follow the straight line, which suggests that the residuals are approximately not  normally distributed. The assumption of normally distribution is not satisfied. Moreover, the p-value in Anderson-Darling test is smaller than the significant level (0.05) which provide evidence that to accept the alternative hypothesis. The assumption of normally distribution is violated
+
+f. Discuss whether there are any outlying observations, and if so, their effect on the fitted SLR line. Refit the SLR model to the data after deleting the outliers. How does this fit differ from the fit to the entire data?
+  ```{r}
+set.seed(1234567)
+train.prop<-0.80
+trnset<-sort(sample(1:nrow(data),ceiling(nrow(data)*train.prop)))
+train.set<-data[trnset,]
+test.set<-data[-trnset,]
+```
+
+In the above, I have set a random seed for reproducibility using 'set.seed(1234567)'. I would like to use 80% of the data for training and 20% for testing. It has create training and testing dataset based on the specified proportions
+
+```{r}
+library(caret)
+contpredcols<-5:20
+contpredcols <- 5:20
+
+normParam <- preProcess(train.set[,contpredcols],
+                        method = c("center", "scale"))
+
+data.train <- cbind(train.set[,c("price", "sqft_living")],
+                    predict(normParam, train.set[,contpredcols])) 
+
+data.test <- cbind(test.set[,c("price", "sqft_living")],
+                   predict(normParam, test.set[,5:20]))
+
+```
+
+The columns('contpredcol') containing continuous predictor. I have used the 'prePreocess' function to normalize the continuous predictor variable in the training data. The normalization parameters are stored in 'normParam'. I have created nre dataset that include the dependent variable 'price', the continuous predictor 'sqft_living, and the normalized continuous predictor from the preprocessing step.
+
+```{r}
+mod<-lm(log(price)~sqft_living, data=data.train)
+summary(mod)
+```
+
+I have fitted a simple linear regression model ('mod') where sqft_living is the predictor and log(price is the response variable using the training data.
+
+The Null hypothesis of this linear regression model is there is no statistically significant linear relationship between the square footage of living space and the log-transformed houses prices. The coefficient of sqft_living in the linear regression model is equal to zero.
+
+The Alternative hypothesis is there is is statistically significant linear relationship between sqft_living and log(price). It suggests that the coefficient of sqft_living in the linear regression is not equal to zero.
+
+We can see that the R-squared Value is 0.377, which indicated that the proportion of the variance in the response variable (log(price)) that is 37.7% explained by the predictor of the variance ('sqft_living') which is quite low and suggest that it is not a better fit.
+
+The F-statistic and p-value suggested that there is statistically linear relationship between sqft_living and log(price) because the p-value is smaller than the significant level (0.05)
+
+
+```{r}
+x<-data.train$price
+y<-log(x)
+plot(y, predict(mod, newdata = data.train), 
+     col = 4, cex = 0.3, xlab = "Actual", ylab = "Predicted", axes = FALSE)
+extpts <- which(abs(residuals(mod)) > 3 * sd(residuals(mod)))
+text(y[extpts], 
+     predict(mod, newdata = data.train)[extpts],
+     rownames(data.train)[extpts], cex = 0.5, col = 2)
+axis(1); axis(2); grid(); 
+```
+
+In the above plot, it is a residual plot to visualize the relationship between actual log prices and predicted log prices from the mod model. We can see that there are a lots of red point in the plot which are the outlier in the data. Outlier can disproportionately influence the coefficients of a regression and introduce noise, bias into the model.And it might cause a large value of residual and affect the result of coefficient between sqft_living and log(price), finally cause the predicted model cannot give the precise predict result. 
+
+```{r}
+# Remove Outliers
+data.train_clean <- data.train[-extpts, ]
+
+# Refit SLR Model
+mod_clean <- lm(log(price) ~ sqft_living, data = data.train_clean)
+summary(mod_clean)
+```
+
+I have identify and remove the outliers based on the residual of the initial 'mod' model in the above code. The cleaned training dataset is sorted in 'data.train_clean'. And I have refit a simple linear regression model 'mod_clean' using the cleaned data, where 'log(price)' is the response and 'sqft_living' is the predictor.
+
+We can obtain information about the cleaned data in the summary of mod_clean.
+
+```{r}
+confint(mod_clean)
+```
+
+Since the confidence interval for both the intercept and the coefficient of sqft_living do not include zero, it suggests that both the intercept and the effect of sqft_living on log(price) are statistically significant at the 95% confidence level. In addition, the narrow width of the interval suggests a relatively precise estimate of the effect of sqft_living on log(price)
+
+```{r}
+x<-data.test$price
+y<-log(x)
+plot(y,predict(mod_clean,newdata = data.test),col='grey33',cex=0.3,xlab='Actual',ylab='Predicted')
+abline(0,1)
+```
+
+For the above plot, after delete the outlier in the data, we can see that the residual between prediction values and actual values is decreased.  The prediction modal can provide a better fit to the majority of the data points. It is lead to a more accurate prediction in the case. In the above result, the coefficients become more interpretable and reflect the relationship between variables more accurately and also restore homoscedasticity, making the model's assumptions more valid.
+
+g. Check whether the true slope and the true intercept in the regression line of log price on area are significantly different than zero. Use suitable hypothesis tests and confidence interval estimates.
+```{r}
+test_result_slope <- summary(SLR_log)$coefficients[2, ]
+test_result_slope
+conf_interval_slope <- confint(SLR_log)[2, ]
+cat('Confidence Intervals for Slope: ',conf_interval_slope)
+```
+Null hypothesis: The true slope is equal to zero.
+Alternative hypothesis: The true slope is not equal to zero.
+
+The low p-value indicates strong evidence to reject null hypothesis that the true slope is equal to zero, and suggested that the true slope is significantly different than zero.
+
+This interval indicates the range of plausible values for the true slope with a certain level of confidence. From above result, with 95% confident that the true slope for the relationship between living area and log price falls within 0.0003932515 to 0.0004042416. 
+
+```{r}
+test_result_intercept <- summary(SLR_log)$coefficients[1, ]
+test_result_intercept
+conf_interval_intercept <- confint(SLR_log)[1, ]
+cat('Confidence Intervals for Intercept:',conf_interval_intercept)
+```
+
+Null hypothesis: The true intercept is equal to zero
+Alternative hypothesis: The true intercept is not equal to zero
+
+From the above result, we can see that the p-value is extremely small, and smaller than the significant level (0.05) which provide evidence to reject the Null hypothesis and prove that there is significantly different than zero.
+
+This interval indicates the range of plausible values for the true intercept with a certain level of confidence. From above result, with 95% confident that the true slope for the relationship between living area and log price falls within 12.20597 to 12.23096
+
+h. What is the expected log price for a house whose living area is 1500 square feet? Give an estimate along with 95% prediction limits. What can you then say about the corresponding expected price?
+  ```{r}
+new_data <- data.frame(sqft_living = 1500)
+
+# Predict the log price for the given living area
+log_price_pred <- predict(SLR_log, newdata = new_data, interval = "prediction", level = 0.95)
+
+# Extract the predicted log price and prediction intervals
+predicted_log_price <- log_price_pred[1]
+lower_limit <- log_price_pred[2]
+upper_limit <- log_price_pred[3]
+
+# Back-transform to get the expected price
+expected_price <- exp(predicted_log_price)
+lower_price_limit <- exp(lower_limit)
+upper_price_limit <- exp(upper_limit)
+
+
+# Print the results
+cat('\n',"Expected Log Price:", predicted_log_price, "\n")
+cat("95% Prediction Interval for Log Price:", lower_limit, "to", upper_limit, "\n")
+cat("Expected Price:", expected_price, "\n")
+cat("95% Prediction Interval for Price:", lower_price_limit, "to", upper_price_limit, "\n")
+
+```
+
+The expected log price for a house whose living area is 1500 square feet is 12.68899 and the 95% prediction interval provide a range within which you can be 95% confident that the actual logarithm of the price falls for a house with a living area of 1500 square feet which is 12.5255 to 13.2432. The expected price 324,157.6 is the average expected price of a house with a living area of 1500 square feet based on the regression model. The boundary of range 275,267.6 to 564,244.4 provides a range within which we can be 95% confident that the actual price falls for a house with a living area of 1500 square feet.
+
+Q2. Consider the dataset Duncan in the package carData.
+```{r}
+library(carData)
+data(Duncan)
+```
+a. Visually analyze the data to see whether education and income have a predictive effect on prestige.
+```{r}
+par(mfrow = c(1, 2))
+plot(Duncan$education, Duncan$prestige, xlab = "Education", ylab = "Prestige")
+
+plot(Duncan$income, Duncan$prestige, xlab = "Income", ylab = "Prestige")
+```
+
+From the plots that show above, we can see that there is positive correlation in both two plots. When education increase, prestige is also increase. Similarly, when income is increase, the prestige also increase. It suggested that there are predictive effect on prestige. Since there is a clear upward trend, it suggests a potential predictive effect. 
+
+```{r}
+MLR<-lm(prestige~education+income, data = Duncan)
+summary(MLR)
+```
+We can also see if there is predictive effect in the multiple regression model. We can set up the Null hypothesis and Alternative hypothesis.
+
+Null hypothesis: Education and income do not have predictive effect on prestige
+Alternative hypothesis: Education and income have predictive effect on prestige
+
+we can see that the F-statistic is large in above result and the p-value is smaller than the significant level (0.05) which indicated that we have enough evidence to reject the Null hypothesis and accepted that there are significant effect from education and income to prestige. The R-square is 0.8282, which suggested that the variance of prestige is 82.82% explained education and income which is a large value and prove that this model is a better fit and good for prediction.
+```{r}
+ncvTest(MLR)
+```
+```{r}
+ad.test(residuals(MLR))
+```
+
+After all, we are going to check the assumption of multiple regression is satisfied or not. For the assumption of constant variance, we can see that the p-value in ncv test is larger than the significant level which suggested that the assumption of constant variance is satisfied, However, the p-value in Anderson-Darling normality test is smaller than the significant level (0.05), which suggested that the assumption of normality is not satisfied. If we lower our significant level, such change the level become 0.01, all the assumption would be satisfied.
+
+b. Compare across the levels of type to discuss which occupation enjoys (i) more prestige, and (ii) more income.
+
+```{r}
+summary(Duncan$prestige)
+
+boxplot(Duncan$prestige ~ Duncan$type, xlab = "Type", ylab = "Prestige")
+summary(Duncan$income)
+boxplot(Duncan$income ~ Duncan$type, xlab = "Type", ylab = "Income")
+```
+
+(i)
+To discuss which occupation enjoy more prestige, we can obtain the summary statistics for the prestige variable grouped by the level of the 'type' variable. We can see that the overview of the average prestige for each type of occupation.
+
+Based on the summary of statistics, the range of prestige scores varies from a minimum of 3.00 to a maximum of 97.00, indicating a wide range of occupational prestige. The median prestige score of 41.00 suggests that on average, occupations in the dataset have a moderate level of prestige. The mean prestige score of 47.69 is slightly higher than the median, indicating that there might be some higher prestige outliers pulling the mean upwards.The interquartile range which is the difference between the 1st quartile and the 3rd quartile, is substantial. This indicates that there is a considerable spread in the data, with some occupations having significantly lower prestige levels and others having much higher prestige levels.
+
+Moreover, we could create a boxplot to visualize the distribution of prestige for each occupation type. Form the boxplot, we can see that the type of 'prof' enjoy the most prestige, since the minimum, maximum, interquatile range and median are way higher than 'bc' and 'wc'. However, in the boxplot, we can see that there is a outlier for 'prof' type. And for the second who enjoy more prestige is 'wc', the third is 'bc' according to the boxplot.
+
+
+(ii)
+For which occupation enjoy more income.Similarly, we can obtain the summary statistic for the 'Income' variable grouped by the levels of the 'type' variable.
+
+Based on these statistics, we can see that the income levels vary from a minimum of 7.00 to a maximum of 81.00, indicating a wide range of income variability among the occupations. the median income f 42.00 suggests that, on average, occupations in the dataset have a moderate income level. The mean income of 41.87 is slightly lower than the median, indicating that there might be some income outliers pulling the mean downward. The interquartile range, which is the difference between the 1st quartile and the 3rd quatile is significant. This indicates that there is a considerable spread in the income data, with come occupations having significantly lower incomes and others having much higher income.
+
+We could also create a boxplot to visualize the distribution of income for each occupation type. From the boxplot, we can see that 'prof' enjoy more income. Although 'bc' has a outlier that might higher than 'prof''s maximum, most of 'prof' have the higher income than others. From the above result, we can know that the median and the interqualite range of 'prof' is higher than the others. The second would be 'wc' and the third would be 'bc'.
+
+
+c. Fit a multiple linear regression model to see whether education, income, and the levels of type have a predictive effect on prestige.
+```{r}
+model<-lm(prestige~education+income+type,data=Duncan)
+summary(model)
+```
+
+Null hypothesis: There is no significant effect on 'prestige'
+Alternative hypothesis: There is significant effect on 'prestige'
+
+From the above result, the model suggests that 'education', 'income','typepro' and 'typewc'have statistically significant effects on 'prestige', because we can see that the p-value of them is smaller than the significant level (0.05), which rejected the Null hypothesis and suggested there are significant effect on 'prestige
+
+The positive coefficient for 'education' (0.34532) indicates that as education level increases, prestige tends to increase. Similarly, the positive coefficient for 'income' (0.59755) suggests that as income increases, prestige tends to increase.
+
+The high R-squared values suggest that the model explains a substantial portion of variation in 'prestige', which is 91.31%. And the f-statistic is highly significant, p-value of the whole model is smaller than the significant level (0.05) which indicating that the model as a whole is meaningful and have significant predictive effect on 'prestige'
+
+```{r}
+ncvTest(model)
+```
+```{r}
+ad.test(residuals(model))
+```
+
+We should check the model is satisfy the assumption of variance and normality. We can see that in the ncv test, the p-value is larger than the significant level which indicated that the data is satisfy the assumption of constant variance. However, in the Anderson-Darling normality test, the p-value is smaller than the significant level (0.05), if we adjusted the significant level into 0.01, all the assumption would be satisfied. 
+
+
+d. Investigate and comment on the effect due to interactions between the predictors on prestige.
+```{r}
+interaction<-lm(prestige~education*income*type,data=Duncan)
+summary(interaction)
+```
+
+From the above result, we can find out couple significant interaction terms, which are 
+education and income, 
+education and occupation 'prof',
+income and occupation 'prof',
+education and income and occupation type 'prof',
+education and income and occupation type 'wc'.
+
+For education and income, education and typeprof, education and typewc, income and typeprof, income and typewc, they are all have the positive correlation since they have the positive value in the estimate column For education:income:typeprof and education:income:typewc, they have the negative correlation between each other
+Because the interaction indicated above, they have a smaller p-value than the significant level (0.05), therefore, they have significant effect on prestige.
+
+The multiple R-squared value is 0.9386, which indicated that the model explains 93.86% variability in prestige. It suggested the model is a good fit. And the adjusted R-squared value is 0.9182 that adjusts the R-squared value for the number of predictors in the model. The F-statistic test suggested that the overall model is statistically significant since the F-statistic is 45.87 and the p-value is 2.2e-16, indicating that the model overall is highly significant.
+
+e. Investigate the residual plots from the model in (c) and comment on the model adequacy.
+```{r}
+par(mfrow=c(2,2))
+plot(model,pch=20)
+```
+
+For the plot of Residual vs Fitted Values Plot, it is about the relationship between the predicted values and the residuals. We can check for the linearity. If there is linearity, the points should be randomly around the horizontal line. We can see that the most of the points are lie around the horizontal line, only some of outlier. It suggested it satisfy the linearity assumption.
+
+The Normal Q-Q plot is used to assess the normality of the residuals. It compares the distribution of the residuals to a theoretical normal distribution. We can see that the points on Q-Q plot are closely follow a straight line, it suggests that the residuals are approximately normally distributed. However, we can see that there are two outlier at the end of the plot. Overall, it is normally distributed.
+
+The Scale-Location plot helps assess whether the variance of the residuals is constant across the range of predictor values.Ideally, the porints should be randomly scattered and show no fan shape or funnel shape. However, we can see that there is a slightly fan shape in the Scale-Location plot. Therefore, it has violate the assumption of constant variance of residuals.
+
+The Residual vs. Leverage plot helps identify influential data points that have strong impact on the modal. Since the majority of the data points are lie on the left which suggested that most of them have low leverage and don't exert a strong influence on the regression. However, there are few of them lie on the right side and the center. These pints might have extreme values in one or more predictor variables or be influential for some other reason. The point on the right hand side of the line may be outliers, which mean they have large residual compared to the majority of the data. These outliers might be driving the regression results or affecting the model's performance.
+
+About the model adequacy, since the scale-location plot do not have the flat horizontal line and violate the constant variance, it is indicated issues with the model's adequacy, and further model adjustments may be necessary.
+
+f. Redo the analysis by confining the predictors to education and income.
+```{r}
+redo<-lm(prestige~education+income,data=Duncan)
+summary(redo)
+```
+From the above result, both education and income coefficients are highly significant, with p-values much less than the standard significance level (0.05). The residual standard error (13.37) represents the average deviation of actual data points from the predicted values. And the multiple R-squared, in the case, the model explains approximately 82.82% of the variance in prestige. F-statistic is 101.2 and the associated p-value is <2.2e-16 indicating that the model overall is highly significant
+
+In summary, this simplified model with only education and income as predictors suggests that both education and income have a statistically significant positive association with prestige. 
+
+```{r}
+redo1<-lm(prestige~education*income,data=Duncan)
+summary(redo1)
+```
+
+For the above result, we can see that the p-value of interaction of education and income is larger than the significant level, which suggested that has no significant effect on prestige. However, same with the model of education+income, education and income are also have the significant effect to prestige and according to the estimate column, education and income both have the positive correlation with prestige.
+
+
+g. Construct and comment on partial regression plots corresponding to education and income. How are they different from the partial residual plots for these variables?
+```{r}
+library(car)
+crPlots(redo)
+#avPlots(redo)
+```
+
+From the partial regression plot of education and income, we can see that both of them have a noticeable slope which indicated that there is a linear relationship between the predictor and the response while controlling for other predictor. 
+
+The key difference from the partial residual plots for these variables is partial regression plots focus on the relationship between a predictor and the response variable, such as prestige ~ education ,considering other predictors in the model. They help assess linearity and the effect of one variable on the response. Partial residual plots, focus on the relationship between a predictor and the residuals of the full model. They help identify the patterns of deviations from linearity that may indicate model inadequacy. 
+
+In conclude, both types of plots involve a single predictor and response variable, partial regression plots emphasize the influence of the predictor variable on the response, whereas partial residual plots emphasize the pattern of residuals associated with the predictor variable. These plots serve different diagnostic purposes when assessing the adequacy of a regression model.
+
+h. Compute and interpret a suitable effect size for the model in (f).
+```{r}
+effect_size<-summary(redo)$r.squared
+effect_size
+```
+
+The value of Multiple R-squared is 0.8282 which represents th proportion of variance in prestige that is explained by the combination of education and income in the model. In this case, approximately 82.82% of the variability in prestige can be explained by education and income levels. It is a quite large value and prove that it is a better fit for a linear regression model 
+
+The high multiple values suggest that the combination of education and income has a substantial effect on predicting prestige in the dataset. These predictors are significant and account for a significant proportion of variability in prestige.
