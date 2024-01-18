@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.353">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="HeiYee Lau">
+
+<title>HW8</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="HW8_files/libs/clipboard/clipboard.min.js"></script>
+<script src="HW8_files/libs/quarto-html/quarto.js"></script>
+<script src="HW8_files/libs/quarto-html/popper.min.js"></script>
+<script src="HW8_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="HW8_files/libs/quarto-html/anchor.min.js"></script>
+<link href="HW8_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="HW8_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="HW8_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="HW8_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="HW8_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">HW8</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>HeiYee Lau </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Problem 1. The dataset caeserian.csv contains information about Caesarian section results of 80 pregnant women with the most important characteristics of delivery problems in the medical field. It gives information on Age,Delivery number (1, 2, 3,4),Delivery time classified as (0, 1, 2) with 0 = timely, 1 = premature, 2 = latecomer,Blood Pressure (0 = low, 1 = normal, 2 = high),Heart Problem (0 = apt, 1 = inept), Caesarian(0 = No, 1 = Yes) - response variable.</p>
+<p>Answer the following questions.</p>
+<ol type="a">
+<li>Use the predictor Age in a binary logit model for the incidence of Caesarian. Interpret the results.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>caesarian<span class="ot">&lt;-</span><span class="fu">read.csv</span>(<span class="st">"caesarian.csv"</span>, <span class="at">header=</span><span class="cn">TRUE</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>caesarian<span class="sc">$</span>delivery_number<span class="ot">&lt;-</span> <span class="fu">as.factor</span> (caesarian<span class="sc">$</span>delivery_number)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>caesarian<span class="sc">$</span>delivery_time <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(caesarian<span class="sc">$</span>delivery_time)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>caesarian<span class="sc">$</span>blood_pressure <span class="ot">&lt;-</span><span class="fu">as.factor</span>(caesarian<span class="sc">$</span>blood_pressure)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>caesarian<span class="sc">$</span>heart_problem <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(caesarian<span class="sc">$</span>heart_problem)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>caesarian<span class="sc">$</span>Caesarian <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(caesarian<span class="sc">$</span>Caesarian)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123457</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>train.prop <span class="ot">&lt;-</span> <span class="fl">0.80</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>strats <span class="ot">&lt;-</span> caesarian<span class="sc">$</span>Caesarian</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>rr <span class="ot">&lt;-</span> <span class="fu">split</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(strats), strats)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>idx <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">as.numeric</span>(<span class="fu">unlist</span>(<span class="fu">sapply</span>(rr, </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">function</span>(x) <span class="fu">sample</span>(x, <span class="fu">length</span>(x)<span class="sc">*</span>train.prop)))))</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>caesarian.train <span class="ot">&lt;-</span> caesarian[idx, ]</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>caesarian.test <span class="ot">&lt;-</span> caesarian[<span class="sc">-</span>idx, ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>age_pred <span class="ot">&lt;-</span> <span class="fu">glm</span>(Caesarian <span class="sc">~</span> age, <span class="at">data =</span> caesarian.train, <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link=</span><span class="st">"logit"</span>))</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(age_pred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = Caesarian ~ age, family = binomial(link = "logit"), 
+    data = caesarian.train)
+
+Coefficients:
+            Estimate Std. Error z value Pr(&gt;|z|)
+(Intercept) -0.67091    1.40960  -0.476    0.634
+age          0.03445    0.04994   0.690    0.490
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 86.046  on 62  degrees of freedom
+Residual deviance: 85.566  on 61  degrees of freedom
+AIC: 89.566
+
+Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+</div>
+<p>The intercept represents the log-odds of Caesaeian when Age is zero. The coefficient for Age is 0.03445, with a standard error of 0.04994 This means that for each one-unit increase in Age, the log-odds of having a Caesarian increases by 0.03445 However, the p-value associated with Age is 0.490, which is greater than the significant level (0.05). This suggests that Age may not have a statistically significant predictor of Caesarian in this model.</p>
+<p>The output also shows the null deviance of 86.046 on 62 degree of freedom which indicated how well the response variable can be predicted by a model with only an intercept term, and the residual deviance of 85.566 on 61 degree of freedom, which is show how well the response variable can be predicted by a model with the intercept and the selected predictor variables. Since the residual deviance is smaller than the null deviance, it suggests that the model with the Predictor variable “Age” is better fit than the null model. The AIC is 89.566</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>null.logit<span class="ot">&lt;-</span><span class="fu">glm</span>(Caesarian<span class="sc">~</span><span class="dv">1</span>, <span class="at">data=</span>caesarian.train, <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link=</span><span class="st">"logit"</span>))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(null.logit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = Caesarian ~ 1, family = binomial(link = "logit"), 
+    data = caesarian.train)
+
+Coefficients:
+            Estimate Std. Error z value Pr(&gt;|z|)
+(Intercept)   0.2877     0.2546    1.13    0.258
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 86.046  on 62  degrees of freedom
+Residual deviance: 86.046  on 62  degrees of freedom
+AIC: 88.046
+
+Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>full.logit <span class="ot">&lt;-</span> <span class="fu">glm</span>(Caesarian <span class="sc">~</span> . , <span class="at">data =</span> caesarian.train, <span class="at">family =</span> <span class="st">"binomial"</span>(<span class="at">link=</span><span class="st">"logit"</span>))</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(full.logit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = Caesarian ~ ., family = binomial(link = "logit"), 
+    data = caesarian.train)
+
+Coefficients:
+                   Estimate Std. Error z value Pr(&gt;|z|)  
+(Intercept)         2.10729    1.96780   1.071   0.2842  
+age                -0.02548    0.06620  -0.385   0.7003  
+delivery_number2    1.15576    0.83826   1.379   0.1680  
+delivery_number3    1.12106    1.07226   1.046   0.2958  
+delivery_number4   17.82109 2313.46728   0.008   0.9939  
+delivery_time1     -1.33456    0.86234  -1.548   0.1217  
+delivery_time2     -1.78609    0.88845  -2.010   0.0444 *
+blood_pressure1    -2.54558    1.00352  -2.537   0.0112 *
+blood_pressure2    -1.21159    0.93907  -1.290   0.1970  
+heart_problem1      1.73554    0.68902   2.519   0.0118 *
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 86.046  on 62  degrees of freedom
+Residual deviance: 62.231  on 53  degrees of freedom
+AIC: 82.231
+
+Number of Fisher Scoring iterations: 16</code></pre>
+</div>
+</div>
+<ol start="2" type="a">
+<li>Among the remaining four predictors, which along with Age best explains the incidence of a Caeserian section? What is the reduction in deviance by including this additional predictor?</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>both.logit<span class="ot">&lt;-</span><span class="fu">step</span>(null.logit, <span class="fu">list</span>(<span class="at">lower=</span><span class="fu">formula</span>(null.logit),<span class="at">upper=</span><span class="fu">formula</span>(full.logit)),<span class="at">direction=</span><span class="st">"both"</span>, <span class="at">trace=</span><span class="dv">0</span>, <span class="at">data=</span>caesarian.train)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(both.logit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Caesarian ~ heart_problem</code></pre>
+</div>
+</div>
+<p>In the following code, we can find out the best predictor that model with the smallest residual deviance. We using for-loop to fit the predictors into different model and find the difference between the residual deviance reduction.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>deviance_reductions <span class="ot">&lt;-</span> <span class="fu">numeric</span>()</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>predictors <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"delivery_number"</span>, <span class="st">"delivery_time"</span>, <span class="st">"blood_pressure"</span>, <span class="st">"heart_problem"</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (predictor <span class="cf">in</span> predictors) {</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  model <span class="ot">&lt;-</span> <span class="fu">glm</span>(Caesarian <span class="sc">~</span> age <span class="sc">+</span> <span class="fu">as.factor</span>(<span class="fu">get</span>(predictor)), <span class="at">data =</span> caesarian.train, <span class="at">family =</span> <span class="st">"binomial"</span> (<span class="at">link =</span> <span class="st">"logit"</span>))</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  deviance_reductions <span class="ot">&lt;-</span> <span class="fu">c</span>(deviance_reductions, <span class="fu">deviance</span>(age_pred) <span class="sc">-</span> <span class="fu">deviance</span>(model))</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>best_predictor <span class="ot">&lt;-</span> predictors[<span class="fu">which.max</span>(deviance_reductions)]</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>best_deviance_reduction <span class="ot">&lt;-</span> <span class="fu">max</span>(deviance_reductions)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"The variable that along with Age best explains the incidence of a Caesarian section is"</span>,best_predictor,<span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The variable that along with Age best explains the incidence of a Caesarian section is heart_problem </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(best_deviance_reduction)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 10.15274</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>age_pred <span class="ot">&lt;-</span> <span class="fu">glm</span>(Caesarian <span class="sc">~</span> age<span class="sc">+</span>heart_problem, <span class="at">data =</span> caesarian.train, <span class="at">family =</span> <span class="st">"binomial"</span>(<span class="at">link=</span><span class="st">"logit"</span>))</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(age_pred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = Caesarian ~ age + heart_problem, family = binomial(link = "logit"), 
+    data = caesarian.train)
+
+Coefficients:
+                Estimate Std. Error z value Pr(&gt;|z|)   
+(Intercept)    -0.482326   1.550942  -0.311  0.75581   
+age             0.003674   0.056000   0.066  0.94769   
+heart_problem1  1.810558   0.610215   2.967  0.00301 **
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 86.046  on 62  degrees of freedom
+Residual deviance: 75.413  on 60  degrees of freedom
+AIC: 81.413
+
+Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+</div>
+<p>In the above coding, we first initializes an empty numeric vector to store the reduction in deviance for each predictor and create a vector that contains the names of the remain four predictors we want to assess. The for-loop is to evaluate each predictor in the context of a logistic regression model. We have calculate the reduction in deviance by subtracting the deviance of the model with only Age (age_pred) from the deviance of the model that includes Age and the other predictor. After evaluating all predictors, uses the ‘which.max’ function to identify the index of the maximum reduction in deviance, and extracts the corresponding predictor name from the vector.</p>
+<p>From the result, we can see that the predictor “heart_problem” with predictor “Age” have the best explains the incidence of a Caesarian section. The reduction in deviance by including predictor “heart_problem” is 10.15274 (85.566 - 75.413).</p>
+<ol start="3" type="a">
+<li>Fit and interpret a binary logit regression for the incidence of Caeserian section using all five predictors.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>full.logit <span class="ot">&lt;-</span> <span class="fu">glm</span>(Caesarian <span class="sc">~</span> . , <span class="at">data =</span> caesarian.train, <span class="at">family =</span> <span class="st">"binomial"</span>(<span class="at">link=</span><span class="st">"logit"</span>))</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(full.logit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = Caesarian ~ ., family = binomial(link = "logit"), 
+    data = caesarian.train)
+
+Coefficients:
+                   Estimate Std. Error z value Pr(&gt;|z|)  
+(Intercept)         2.10729    1.96780   1.071   0.2842  
+age                -0.02548    0.06620  -0.385   0.7003  
+delivery_number2    1.15576    0.83826   1.379   0.1680  
+delivery_number3    1.12106    1.07226   1.046   0.2958  
+delivery_number4   17.82109 2313.46728   0.008   0.9939  
+delivery_time1     -1.33456    0.86234  -1.548   0.1217  
+delivery_time2     -1.78609    0.88845  -2.010   0.0444 *
+blood_pressure1    -2.54558    1.00352  -2.537   0.0112 *
+blood_pressure2    -1.21159    0.93907  -1.290   0.1970  
+heart_problem1      1.73554    0.68902   2.519   0.0118 *
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 86.046  on 62  degrees of freedom
+Residual deviance: 62.231  on 53  degrees of freedom
+AIC: 82.231
+
+Number of Fisher Scoring iterations: 16</code></pre>
+</div>
+</div>
+<p>From the full fitted model, the intercept represents the log-odds of Caesarian when all predictor variables are zero. For each one-unit increase in Age, the log-odds of having a Caesarian decrease by 0.02548, but the p-value for Age is not significant since the p-value of Age is 0.7003 which is larger than the significant level (0.05), suggesting that Age might not be a significant predictor in this model.</p>
+<p>The other predictors also have coefficients and p-values, all of them have a larger p-value than the significant level except predictor delivery_time2, blood_pressure1 and heart_problem1, have the p-value which smaller than the significant level (0.05) and indicates that they are statistically significant impact to Caesarian.</p>
+<p>The null deviance of model is 86.046 on 62 d.f. and residual deviance of model is 62.231 on 53 d.f..The deviance values represent goodness-of-fit statistics. The residual deviance is smaller than the null deviance, which indicate that the model with five predictors is better fit than the null model. And the AIC is 82.231</p>
+<ol start="4" type="a">
+<li>Construct the fitted values from the model in (c). Assume that the fit corresponds to Caesarian = 1 if the estimated logit exceeds 0.65, else assume Caesarian = 0. Then, construct a confusion (or misclassification) table and discuss what it says about the model fit.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>pred.full <span class="ot">&lt;-</span> <span class="fu">predict</span>(full.logit, <span class="at">newdata =</span> caesarian.test, <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>(table.full<span class="ot">&lt;-</span><span class="fu">table</span>(pred.full<span class="sc">&gt;</span><span class="fl">0.65</span>, caesarian.test<span class="sc">$</span>Caesarian))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       
+        0 1
+  FALSE 5 5
+  TRUE  2 5</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: ggplot2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: lattice</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>f<span class="ot">&lt;-</span><span class="fu">ifelse</span>(pred.full<span class="sc">&gt;</span><span class="fl">0.65</span>,<span class="dv">1</span>,<span class="dv">0</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>(cm.full<span class="ot">&lt;-</span><span class="fu">confusionMatrix</span>(<span class="at">reference=</span><span class="fu">as.factor</span>(caesarian.test<span class="sc">$</span>Caesarian),<span class="at">data=</span><span class="fu">as.factor</span>(f), <span class="at">mode=</span><span class="st">"everything"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confusion Matrix and Statistics
+
+          Reference
+Prediction 0 1
+         0 5 5
+         1 2 5
+                                          
+               Accuracy : 0.5882          
+                 95% CI : (0.3292, 0.8156)
+    No Information Rate : 0.5882          
+    P-Value [Acc &gt; NIR] : 0.6022          
+                                          
+                  Kappa : 0.2013          
+                                          
+ Mcnemar's Test P-Value : 0.4497          
+                                          
+            Sensitivity : 0.7143          
+            Specificity : 0.5000          
+         Pos Pred Value : 0.5000          
+         Neg Pred Value : 0.7143          
+              Precision : 0.5000          
+                 Recall : 0.7143          
+                     F1 : 0.5882          
+             Prevalence : 0.4118          
+         Detection Rate : 0.2941          
+   Detection Prevalence : 0.5882          
+      Balanced Accuracy : 0.6071          
+                                          
+       'Positive' Class : 0               
+                                          </code></pre>
+</div>
+</div>
+<p>The confusion table in above is used to assess the performance of the logistic regression model. It shows that how well the model’s predictions match the actual outcome.</p>
+<p>In the confusion matrix, we can see that there are 5 True Negative that correctly predicted Negative. 5 True Positive that correctly predicted Positive. 5 False Negative that incorrectly predicted Negative and 2 False Positive that incorrectly predicted Positive.</p>
+<p>The accuracy of full model is 58.82%. Sensitivity and Specificity of the model are 71.43% and 50% respectively.This means the model correctly identifies Caesarian cases 71.43% of the time and the model correctly identifies non-Caesarian cases 50% of the time. The F1 score is 58.82% and Recall is 71.43%. We can see that the Sensitivity and recall are high and prove that this model can make a better prediction and accuracy result.</p>
+<p><strong>Problem 2.</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>levee.data<span class="ot">&lt;-</span><span class="fu">read.csv</span>(<span class="st">"leveefailure.csv"</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>cols_with_na <span class="ot">&lt;-</span> <span class="fu">colnames</span>(levee.data)[<span class="fu">colSums</span>(<span class="fu">is.na</span>(levee.data)) <span class="sc">&gt;</span> <span class="dv">0</span>]</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop columns with missing values</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>levee.data <span class="ot">&lt;-</span> levee.data[, <span class="sc">!</span><span class="fu">colnames</span>(levee.data) <span class="sc">%in%</span> cols_with_na]</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>levee.data<span class="sc">$</span>Failure<span class="ot">&lt;-</span><span class="fu">as.factor</span>(levee.data<span class="sc">$</span>Failure)</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>levee.data<span class="sc">$</span>Year<span class="ot">&lt;-</span><span class="fu">as.factor</span>(levee.data<span class="sc">$</span>Year)</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>levee.data<span class="sc">$</span>Sediments<span class="ot">&lt;-</span><span class="fu">as.factor</span>(levee.data<span class="sc">$</span>Sediments)</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>levee.data<span class="sc">$</span>Borrowpit<span class="ot">&lt;-</span><span class="fu">as.factor</span>(levee.data<span class="sc">$</span>Borrowpit)</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>levee.data<span class="sc">$</span>Meander<span class="ot">&lt;-</span><span class="fu">as.factor</span>(levee.data<span class="sc">$</span>Meander)</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>levee.data<span class="sc">$</span>Landcover<span class="ot">&lt;-</span><span class="fu">as.factor</span>(levee.data<span class="sc">$</span>Landcover)</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>levee.data<span class="sc">$</span>Revetment<span class="ot">&lt;-</span><span class="fu">as.factor</span>(levee.data<span class="sc">$</span>Revetment)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In the data, since we found out that there is a NaN column, we would drop this column as data cleaning and better analysis the data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(levee.data<span class="sc">$</span>Failure)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 0  1 
+41 41 </code></pre>
+</div>
+</div>
+<p>We can see that the distribution of Failure, which there are 41 observations that Failure = 1 and 41 observations that Failure = 0.</p>
+<p>We would train the data into 80-20 split to train data and test data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123457</span>)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>train.prop <span class="ot">&lt;-</span> <span class="fl">0.80</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>strats <span class="ot">&lt;-</span> levee.data<span class="sc">$</span>Failure</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>rr <span class="ot">&lt;-</span> <span class="fu">split</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(strats), strats)</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>idx <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">as.numeric</span>(<span class="fu">unlist</span>(<span class="fu">sapply</span>(rr, </span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">function</span>(x) <span class="fu">sample</span>(x, <span class="fu">length</span>(x)<span class="sc">*</span>train.prop)))))</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>levee.train <span class="ot">&lt;-</span> levee.data[idx, ]</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>levee.test <span class="ot">&lt;-</span> levee.data[<span class="sc">-</span>idx, ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(levee.train<span class="sc">$</span>Failure)<span class="sc">/</span><span class="fu">nrow</span>(levee.train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  0   1 
+0.5 0.5 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(levee.train<span class="sc">$</span>Failure)<span class="sc">/</span><span class="fu">nrow</span>(levee.train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  0   1 
+0.5 0.5 </code></pre>
+</div>
+</div>
+<p>We can see that the proportions of the two level of the response Failure are the same in the train, test and the entire data since all of them is 0.5.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>levee_null.logit <span class="ot">&lt;-</span> <span class="fu">glm</span>(Failure<span class="sc">~</span><span class="dv">1</span>, <span class="at">data =</span> levee.train, <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>))</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(levee_null.logit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = Failure ~ 1, family = binomial(link = "logit"), 
+    data = levee.train)
+
+Coefficients:
+             Estimate Std. Error z value Pr(&gt;|z|)
+(Intercept) 1.665e-16  2.500e-01       0        1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 88.723  on 63  degrees of freedom
+Residual deviance: 88.723  on 63  degrees of freedom
+AIC: 90.723
+
+Number of Fisher Scoring iterations: 2</code></pre>
+</div>
+</div>
+<p>In the above is the null model. We an see that the coefficient of intercept is 1.665e-16 and the p-value is 1 which is much larger than the significant level (0.05) and suggests the intercept is not significant.</p>
+<p>The null deviance and residual deviance is 88.723 on 63 d.f. The AIC is 90.723.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>full.logit <span class="ot">&lt;-</span> <span class="fu">glm</span>(Failure <span class="sc">~</span> . ,<span class="at">data =</span> levee.train, </span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(full.logit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = Failure ~ ., family = binomial(link = "logit"), 
+    data = levee.train)
+
+Coefficients:
+                     Estimate Std. Error z value Pr(&gt;|z|)  
+(Intercept)         5.087e+01  5.841e+03   0.009   0.9931  
+Year1910            9.156e-01  1.657e+00   0.553   0.5805  
+Year1937            3.579e+01  3.480e+03   0.010   0.9918  
+Rivermile          -5.264e-02  2.568e-02  -2.050   0.0404 *
+Sediments1         -1.401e+00  1.563e+00  -0.896   0.3701  
+Borrowpit1         -1.933e+01  3.480e+03  -0.006   0.9956  
+Meander2           -1.132e+00  2.236e+00  -0.506   0.6125  
+Meander3            2.182e+00  2.632e+00   0.829   0.4071  
+Meander4            8.727e-02  1.681e+00   0.052   0.9586  
+ChannelWidth        3.053e-03  1.506e-03   2.028   0.0426 *
+Floodwaywidth      -6.295e-04  4.077e-04  -1.544   0.1225  
+ConstrictionFactor -2.663e+00  1.629e+00  -1.635   0.1021  
+Landcover2         -2.131e+01  5.841e+03  -0.004   0.9971  
+Landcover3         -2.073e+01  5.841e+03  -0.004   0.9972  
+Landcover4         -1.908e+01  5.841e+03  -0.003   0.9974  
+VegWidth           -2.866e-04  6.017e-04  -0.476   0.6339  
+Sinuosity           6.575e+00  3.060e+00   2.149   0.0317 *
+Dredging           -2.250e-05  1.048e-05  -2.148   0.0318 *
+Revetment1         -1.794e+01  5.453e+03  -0.003   0.9974  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 88.723  on 63  degrees of freedom
+Residual deviance: 34.336  on 45  degrees of freedom
+AIC: 72.336
+
+Number of Fisher Scoring iterations: 18</code></pre>
+</div>
+</div>
+<p>In the above table, we have fit a binary regression witha logit link to the training data in levee.train. It is the full model that the response Failure and the model includes all the predictors.</p>
+<p>We can see that there are several variables are statisticlly significant which are “loan”, “contactunknown”, “month”, “duration”, “campaign” and “poutcomesuccess”, which are have smaller p-value than smaller than the significant level (0.05). Moreover, the variable “housing” is marginally significant which have the p-value (0.0099561) suggesting that having a housing loan may have a modest effect on the log-odds of “Failure”.</p>
+<p>Since the residual deviance (34.336) is smaller than the null deviance(88.723), it suggests that the model with all the predictors have a better fit than a null model. The AIC is 72.336 which can be used for model comparison.</p>
+<p>Then, we will do the variable selection that using the option direction = “both” in the step() function, which implies both forward and backward selection.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>levee_both.logit <span class="ot">&lt;-</span> <span class="fu">step</span>(full.logit, <span class="fu">list</span>(<span class="at">lower=</span><span class="fu">formula</span>(levee_null.logit),<span class="at">upper=</span><span class="fu">formula</span>(full.logit)),<span class="at">direction=</span><span class="st">"both"</span>,<span class="at">trace=</span><span class="dv">0</span>, <span class="at">data =</span> levee.train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(levee_both.logit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Failure ~ Year + Rivermile + Borrowpit + ChannelWidth + Floodwaywidth + 
+    ConstrictionFactor + Landcover + Sinuosity + Dredging</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(levee_both.logit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = Failure ~ Year + Rivermile + Borrowpit + ChannelWidth + 
+    Floodwaywidth + ConstrictionFactor + Landcover + Sinuosity + 
+    Dredging, family = binomial(link = "logit"), data = levee.train)
+
+Coefficients:
+                     Estimate Std. Error z value Pr(&gt;|z|)   
+(Intercept)         4.760e+01  3.652e+03   0.013  0.98960   
+Year1910            3.264e-01  1.353e+00   0.241  0.80943   
+Year1937            3.531e+01  2.161e+03   0.016  0.98696   
+Rivermile          -4.999e-02  2.050e-02  -2.438  0.01475 * 
+Borrowpit1         -1.918e+01  2.161e+03  -0.009  0.99292   
+ChannelWidth        2.670e-03  1.009e-03   2.646  0.00813 **
+Floodwaywidth      -7.438e-04  3.515e-04  -2.116  0.03436 * 
+ConstrictionFactor -1.790e+00  1.150e+00  -1.556  0.11975   
+Landcover2         -2.107e+01  3.651e+03  -0.006  0.99540   
+Landcover3         -1.937e+01  3.651e+03  -0.005  0.99577   
+Landcover4         -1.890e+01  3.651e+03  -0.005  0.99587   
+Sinuosity           6.563e+00  2.344e+00   2.800  0.00512 **
+Dredging           -2.106e-05  7.747e-06  -2.719  0.00655 **
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 88.723  on 63  degrees of freedom
+Residual deviance: 38.575  on 51  degrees of freedom
+AIC: 64.575
+
+Number of Fisher Scoring iterations: 17</code></pre>
+</div>
+</div>
+<p>Stepwise selection for the leveefailure data uses the above code and selects a model whose coefficients are shown above. We can see that this model selects a model with 6 out of 13 predictors.</p>
+<p>The intercept represents the log-odds of the response variable “Failure” when all predictor variables are set to zero. And the intercept is not statisitcally significant. Moreover, Sinuousity, ChannelWidth and Dredging are also the significant variable in the model since the p-value is smaller than the significant level (0.05).However, Landcover, Year and Borrowpit have the larger p-value than the significant level (0,05), which is suggest that they are not significant. It has been selected might because they might highly correlated with one or more of the other predictor variables in the model, or since the smaller dataset that the model may not have enough statistical power to detect smaller effects, making some variables appear less significant.</p>
+<p>Overall, the model’s goodness of fit is evaluated using the null deviance, residual deviance and AIC. Since the residual deviance is smaller than the null deviance,although the residual deviance of both logit model is higher than the full model, but it has lower AIC value (64.575) for the model with predictor suggests that both of the model are better fit and we can check the accuracy, sensitivity and specifity to decide which model is the best model to make prediction.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>pred.both <span class="ot">&lt;-</span> <span class="fu">predict</span>(levee_both.logit, <span class="at">newdata =</span> levee.test, <span class="at">type=</span><span class="st">"response"</span>)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>pred.full <span class="ot">&lt;-</span> <span class="fu">predict</span>(full.logit, <span class="at">newdata =</span> levee.test, <span class="at">type=</span><span class="st">"response"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret)</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>b_both<span class="ot">&lt;-</span><span class="fu">ifelse</span>(pred.both<span class="sc">&gt;</span><span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>cm.both <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(<span class="at">reference=</span><span class="fu">as.factor</span>(levee.test<span class="sc">$</span>Failure),<span class="at">data=</span><span class="fu">as.factor</span>(b_both), <span class="at">mode=</span><span class="st">"everything"</span>)</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>cm.both</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confusion Matrix and Statistics
+
+          Reference
+Prediction 0 1
+         0 5 4
+         1 4 5
+                                          
+               Accuracy : 0.5556          
+                 95% CI : (0.3076, 0.7847)
+    No Information Rate : 0.5             
+    P-Value [Acc &gt; NIR] : 0.4073          
+                                          
+                  Kappa : 0.1111          
+                                          
+ Mcnemar's Test P-Value : 1.0000          
+                                          
+            Sensitivity : 0.5556          
+            Specificity : 0.5556          
+         Pos Pred Value : 0.5556          
+         Neg Pred Value : 0.5556          
+              Precision : 0.5556          
+                 Recall : 0.5556          
+                     F1 : 0.5556          
+             Prevalence : 0.5000          
+         Detection Rate : 0.2778          
+   Detection Prevalence : 0.5000          
+      Balanced Accuracy : 0.5556          
+                                          
+       'Positive' Class : 0               
+                                          </code></pre>
+</div>
+</div>
+<p>For the confusion matrix above, there are 5 true negative and 5 true positive, that correctly determine 10 cases. However, there are 4 instances that determine to be positive incorrectly which is the false positive and 4 false negative, that have 8 cases that is incorrectly predicted. The accuracy of the both model is 55.56%. Sensitivity, Specificity and F1 score of this model are also 55.56%.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>b_full<span class="ot">&lt;-</span><span class="fu">ifelse</span>(pred.full<span class="sc">&gt;</span><span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>cm.full <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(<span class="at">reference=</span><span class="fu">as.factor</span>(levee.test<span class="sc">$</span>Failure),<span class="at">data=</span><span class="fu">as.factor</span>(b_full), <span class="at">mode=</span><span class="st">"everything"</span>)</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>cm.full</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confusion Matrix and Statistics
+
+          Reference
+Prediction 0 1
+         0 5 3
+         1 4 6
+                                         
+               Accuracy : 0.6111         
+                 95% CI : (0.3575, 0.827)
+    No Information Rate : 0.5            
+    P-Value [Acc &gt; NIR] : 0.2403         
+                                         
+                  Kappa : 0.2222         
+                                         
+ Mcnemar's Test P-Value : 1.0000         
+                                         
+            Sensitivity : 0.5556         
+            Specificity : 0.6667         
+         Pos Pred Value : 0.6250         
+         Neg Pred Value : 0.6000         
+              Precision : 0.6250         
+                 Recall : 0.5556         
+                     F1 : 0.5882         
+             Prevalence : 0.5000         
+         Detection Rate : 0.2778         
+   Detection Prevalence : 0.4444         
+      Balanced Accuracy : 0.6111         
+                                         
+       'Positive' Class : 0              
+                                         </code></pre>
+</div>
+</div>
+<p>For the confusion matrix above, there are 5 true negative and 6 true positive. There are 11 instances that determine to be positive incorrectly which is the 3 false positive and 4 false negative that have 7 cases are incorrectly predicted. The accuracy of full model is 61.11%. Sensitivity and Specificity are 55.56% and 66.67% respectively. The F1 score is 58.82%.</p>
+<p>On the other hand, after calculate the sensitivity, specificity and F1 score, we can see that full model is better than the both model because full model has a higher accuracy, specificity and F1 score, therefore, we can conclude that based on the these result, it suggests that full model can give a more accuracy and better fit prediction result.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pROC)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Type 'citation("pROC")' for a citation.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'pROC'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    cov, smooth, var</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>roc.both <span class="ot">&lt;-</span> <span class="fu">roc</span>(levee.test<span class="sc">$</span>Failure, pred.both, <span class="at">levels=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Setting direction: controls &gt; cases</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>roc.both<span class="fl">.1</span><span class="ot">&lt;-</span><span class="fu">roc</span>(levee.test<span class="sc">$</span>Failure, pred.both,<span class="at">levels=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>),<span class="at">plot=</span>T,<span class="at">print.AUC=</span>T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Setting direction: controls &gt; cases</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="HW8_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">auc</span>(levee.test<span class="sc">$</span>Failure, pred.both)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Setting levels: control = 0, case = 1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Setting direction: controls &lt; cases</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Area under the curve: 0.6296</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>roc.full <span class="ot">&lt;-</span> <span class="fu">roc</span>(levee.test<span class="sc">$</span>Failure, pred.full, <span class="at">levels=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Setting direction: controls &gt; cases</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>roc.full<span class="fl">.1</span><span class="ot">&lt;-</span><span class="fu">roc</span>(levee.test<span class="sc">$</span>Failure, pred.both,<span class="at">levels=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>),<span class="at">plot=</span>T,<span class="at">print.AUC=</span>T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Setting direction: controls &gt; cases</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="HW8_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">auc</span>(levee.test<span class="sc">$</span>Failure, pred.full)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Setting levels: control = 0, case = 1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Setting direction: controls &lt; cases</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Area under the curve: 0.6667</code></pre>
+</div>
+</div>
+<p>We can see that the two model give similar performance. The AUC of the both model is 0.6296 and that of the full model is 0.6667 Since the AUC is between 0.5 to 0.7, it suggests that two models has limited discriminatory power and its ability to correctly classify the classes is relatively weak.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret)</span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(pred.both <span class="sc">&gt;</span> <span class="fl">0.5</span>,<span class="dv">1</span>,<span class="dv">0</span>)</span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>cm.both <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(<span class="at">reference=</span><span class="fu">as.factor</span>(levee.test<span class="sc">$</span>Failure),<span class="at">data=</span><span class="fu">as.factor</span>(b), <span class="at">mode=</span><span class="st">"everything"</span>)</span>
+<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(pred.full <span class="sc">&gt;</span> <span class="fl">0.5</span>,<span class="dv">1</span>,<span class="dv">0</span>)</span>
+<span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a>cm.full <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(<span class="at">reference=</span><span class="fu">as.factor</span>(levee.test<span class="sc">$</span>Failure), <span class="at">data=</span><span class="fu">as.factor</span>(f), <span class="at">mode=</span><span class="st">"everything"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In the following, we would also like to predict the train data and assess accuracy under both model</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Predict train data using both.logit and full.logit</span></span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>pred.tr.both <span class="ot">&lt;-</span> <span class="fu">predict</span>(levee_both.logit, <span class="at">newdata =</span> levee.train, <span class="at">type=</span><span class="st">"response"</span>)</span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>pred.tr.full <span class="ot">&lt;-</span> <span class="fu">predict</span>(full.logit, <span class="at">newdata =</span> levee.train, <span class="at">type=</span><span class="st">"response"</span>)</span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Accuracy of both.logit and full.logit</span></span>
+<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Confusion matrix</span></span>
+<span id="cb72-6"><a href="#cb72-6" aria-hidden="true" tabindex="-1"></a>(table.tr.both <span class="ot">&lt;-</span> <span class="fu">table</span>(pred.tr.both <span class="sc">&gt;</span> <span class="fl">0.5</span>, levee.train<span class="sc">$</span>Failure))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       
+         0  1
+  FALSE 29  5
+  TRUE   3 27</code></pre>
+</div>
+</div>
+<p>For the confusion matrix of training data both model, there are 29 and 27 cases which are True Negative and True Positive. 5 and 3 cases for the False Positive and False Negative cases.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>(table.tr.full <span class="ot">&lt;-</span> <span class="fu">table</span>(pred.tr.full <span class="sc">&gt;</span> <span class="fl">0.5</span>, levee.train<span class="sc">$</span>Failure))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       
+         0  1
+  FALSE 28  5
+  TRUE   4 27</code></pre>
+</div>
+</div>
+<p>For the confusion matrix of training data both model, there are 28 and 27 cases which are True Negative and True Positive. 5 and 4 cases for the False Positive and False Negative cases.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Accuracy</span></span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>(accuracy.tr.both <span class="ot">&lt;-</span> <span class="fu">round</span>((<span class="fu">sum</span>(<span class="fu">diag</span>(table.tr.both))<span class="sc">/</span><span class="fu">sum</span>(table.tr.both))<span class="sc">*</span><span class="dv">100</span>,<span class="dv">2</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 87.5</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>(accuracy.tr.full <span class="ot">&lt;-</span> <span class="fu">round</span>((<span class="fu">sum</span>(<span class="fu">diag</span>(table.tr.full))<span class="sc">/</span><span class="fu">sum</span>(table.tr.full))<span class="sc">*</span><span class="dv">100</span>,<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 85.94</code></pre>
+</div>
+</div>
+<p>We an see that the accuracy of both model is 87.5% and that of full model is 85.94%, since the accuracy of full model is higher, it suggests that the both model is better fit and make better accuracy prediction in full model.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="co"># AUC </span></span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>roc.tr.both <span class="ot">&lt;-</span> <span class="fu">roc</span>(levee.train<span class="sc">$</span>Failure, pred.tr.both, <span class="at">levels=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Setting direction: controls &gt; cases</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="fu">auc</span>(levee.train<span class="sc">$</span>Failure, pred.tr.both)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Setting levels: control = 0, case = 1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Setting direction: controls &lt; cases</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Area under the curve: 0.9336</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a>roc.tr.full <span class="ot">&lt;-</span> <span class="fu">roc</span>(levee.train<span class="sc">$</span>Failure, pred.tr.full, <span class="at">levels=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Setting direction: controls &gt; cases</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="fu">auc</span>(levee.train<span class="sc">$</span>Failure, pred.tr.full)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Setting levels: control = 0, case = 1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Setting direction: controls &lt; cases</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Area under the curve: 0.9531</code></pre>
+</div>
+</div>
+<p>Since in the above, we have suggest that there are variable that suggest multicollinearity, since after variable selection, the variable do not show statistically significant to the model, so that we can test the VIF of the variables in the selected model (full logit model).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: carData</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">vif</span>(full.logit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                           GVIF Df GVIF^(1/(2*Df))
+Year               2.957338e+07  2       73.743753
+Rivermile          2.122720e+01  1        4.607298
+Sediments          3.430898e+00  1        1.852268
+Borrowpit          1.703526e+07  1     4127.379172
+Meander            1.694869e+01  3        1.602714
+ChannelWidth       6.909138e+00  1        2.628524
+Floodwaywidth      4.885317e+00  1        2.210275
+ConstrictionFactor 4.081217e+00  1        2.020202
+Landcover          5.063934e+00  3        1.310433
+VegWidth           6.097717e+00  1        2.469356
+Sinuosity          5.815217e+00  1        2.411476
+Dredging           6.519210e+01  1        8.074163
+Revetment          1.000000e+00  1        1.000000</code></pre>
+</div>
+</div>
+<p>From the VIF result, we can see that Year exceed 70 and Borrowpit even exceed 4000, which suggesting multicollinearity. We would drop the predictor from the model.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a>levee.train<span class="fl">.1</span><span class="ot">&lt;-</span> <span class="fu">subset</span>(levee.train, <span class="at">select=</span><span class="sc">-</span><span class="fu">c</span>(Year))</span>
+<span id="cb96-2"><a href="#cb96-2" aria-hidden="true" tabindex="-1"></a>mod.dropBorrowpit<span class="ot">&lt;-</span><span class="fu">glm</span>(Failure<span class="sc">~</span>., <span class="at">data=</span>levee.train<span class="fl">.1</span>, <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link=</span><span class="st">"logit"</span>))</span>
+<span id="cb96-3"><a href="#cb96-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod.dropBorrowpit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = Failure ~ ., family = binomial(link = "logit"), 
+    data = levee.train.1)
+
+Coefficients:
+                     Estimate Std. Error z value Pr(&gt;|z|)  
+(Intercept)         2.562e+01  3.713e+03   0.007   0.9945  
+Rivermile          -6.744e-03  9.465e-03  -0.712   0.4762  
+Sediments1         -4.248e-01  9.704e-01  -0.438   0.6616  
+Borrowpit1         -5.817e-01  1.425e+00  -0.408   0.6832  
+Meander2           -3.229e+00  1.473e+00  -2.192   0.0284 *
+Meander3            1.267e+00  1.456e+00   0.870   0.3843  
+Meander4           -1.800e+00  1.248e+00  -1.443   0.1491  
+ChannelWidth        1.222e-03  7.441e-04   1.642   0.1005  
+Floodwaywidth      -5.146e-04  3.223e-04  -1.597   0.1103  
+ConstrictionFactor -1.541e+00  1.172e+00  -1.314   0.1888  
+Landcover2         -1.877e+01  3.713e+03  -0.005   0.9960  
+Landcover3         -2.023e+01  3.713e+03  -0.005   0.9957  
+Landcover4         -1.868e+01  3.713e+03  -0.005   0.9960  
+VegWidth            3.642e-04  4.053e-04   0.898   0.3690  
+Sinuosity           1.113e+00  1.185e+00   0.939   0.3478  
+Dredging           -1.732e-06  2.016e-06  -0.859   0.3903  
+Revetment1         -1.758e+01  3.371e+03  -0.005   0.9958  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 88.723  on 63  degrees of freedom
+Residual deviance: 50.094  on 47  degrees of freedom
+AIC: 84.094
+
+Number of Fisher Scoring iterations: 17</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">vif</span>(mod.dropBorrowpit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                       GVIF Df GVIF^(1/(2*Df))
+Rivermile          3.717904  1        1.928187
+Sediments          1.867566  1        1.366589
+Borrowpit          4.157537  1        2.039004
+Meander            6.837893  3        1.377697
+ChannelWidth       2.325548  1        1.524975
+Floodwaywidth      3.931471  1        1.982794
+ConstrictionFactor 2.088072  1        1.445016
+Landcover          2.926745  3        1.195999
+VegWidth           3.487754  1        1.867553
+Sinuosity          1.571670  1        1.253662
+Dredging           3.278031  1        1.810533
+Revetment          1.000000  1        1.000000</code></pre>
+</div>
+</div>
+<p>Now, we can see that, after dropping the variable Year, the VIF of all variable is much smaller , especially Borrowpit is decrease from 4127.379172 to 2.039004</p>
+<p>In addition, we will do the variable selection to choose the predictors that better explaining the response Failure.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb100"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a>reduce_logit <span class="ot">&lt;-</span> <span class="fu">step</span>(mod.dropBorrowpit,<span class="at">direction=</span><span class="st">"both"</span>,<span class="at">trace=</span><span class="dv">0</span>, <span class="at">data =</span>levee.train<span class="fl">.1</span>)</span>
+<span id="cb100-2"><a href="#cb100-2" aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(reduce_logit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Failure ~ Meander + ChannelWidth + Floodwaywidth + ConstrictionFactor + 
+    Landcover + Dredging + Revetment</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb102"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(reduce_logit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = Failure ~ Meander + ChannelWidth + Floodwaywidth + 
+    ConstrictionFactor + Landcover + Dredging + Revetment, family = binomial(link = "logit"), 
+    data = levee.train.1)
+
+Coefficients:
+                     Estimate Std. Error z value Pr(&gt;|z|)  
+(Intercept)         2.155e+01  3.728e+03   0.006   0.9954  
+Meander2           -2.740e+00  1.202e+00  -2.279   0.0227 *
+Meander3            1.647e+00  1.317e+00   1.251   0.2110  
+Meander4           -1.860e+00  1.062e+00  -1.751   0.0799 .
+ChannelWidth        1.111e-03  6.120e-04   1.815   0.0695 .
+Floodwaywidth      -4.830e-04  2.134e-04  -2.263   0.0236 *
+ConstrictionFactor -1.104e+00  7.748e-01  -1.425   0.1540  
+Landcover2         -1.911e+01  3.728e+03  -0.005   0.9959  
+Landcover3         -1.997e+01  3.728e+03  -0.005   0.9957  
+Landcover4         -1.844e+01  3.728e+03  -0.005   0.9961  
+Dredging           -2.664e-06  1.520e-06  -1.752   0.0798 .
+Revetment1         -1.816e+01  3.176e+03  -0.006   0.9954  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 88.723  on 63  degrees of freedom
+Residual deviance: 53.907  on 52  degrees of freedom
+AIC: 77.907
+
+Number of Fisher Scoring iterations: 17</code></pre>
+</div>
+</div>
+<p>After variable selection, Meander, ChannelWidth, Floodwaywidth , ConstrictionFactor, Landcover, Dredging and Revetment have been selected in the model. We can see that the residual deviance (53.907) is smaller than the null deviance (88.723), which indicated that the model is better fit compared with the null model. The AIC is 77.907, which is better than the model that dropped variable “Year” (84.094). Therefore, the model that after variable selection is better than the model after dropped “Year”.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb104"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a>pred.drop <span class="ot">&lt;-</span> <span class="fu">predict</span>(mod.dropBorrowpit, <span class="at">newdata =</span> levee.test, <span class="at">type=</span><span class="st">"response"</span>)</span>
+<span id="cb104-2"><a href="#cb104-2" aria-hidden="true" tabindex="-1"></a>pred.reduce <span class="ot">&lt;-</span> <span class="fu">predict</span>(reduce_logit, <span class="at">newdata =</span> levee.test, <span class="at">type=</span><span class="st">"response"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb105"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a>b_drop<span class="ot">&lt;-</span><span class="fu">ifelse</span>(pred.drop<span class="sc">&gt;</span><span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb105-2"><a href="#cb105-2" aria-hidden="true" tabindex="-1"></a>cm.drop <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(<span class="at">reference=</span><span class="fu">as.factor</span>(levee.test<span class="sc">$</span>Failure),<span class="at">data=</span><span class="fu">as.factor</span>(b_drop), <span class="at">mode=</span><span class="st">"everything"</span>)</span>
+<span id="cb105-3"><a href="#cb105-3" aria-hidden="true" tabindex="-1"></a>cm.drop</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confusion Matrix and Statistics
+
+          Reference
+Prediction 0 1
+         0 4 2
+         1 5 7
+                                         
+               Accuracy : 0.6111         
+                 95% CI : (0.3575, 0.827)
+    No Information Rate : 0.5            
+    P-Value [Acc &gt; NIR] : 0.2403         
+                                         
+                  Kappa : 0.2222         
+                                         
+ Mcnemar's Test P-Value : 0.4497         
+                                         
+            Sensitivity : 0.4444         
+            Specificity : 0.7778         
+         Pos Pred Value : 0.6667         
+         Neg Pred Value : 0.5833         
+              Precision : 0.6667         
+                 Recall : 0.4444         
+                     F1 : 0.5333         
+             Prevalence : 0.5000         
+         Detection Rate : 0.2222         
+   Detection Prevalence : 0.3333         
+      Balanced Accuracy : 0.6111         
+                                         
+       'Positive' Class : 0              
+                                         </code></pre>
+</div>
+</div>
+<p>In the confusion matrix of drop “Year” model, there are 4 Ture Negative and 7 True Positive prediction. On the other hand, there are 5 False Positive and 2 False Negative in the prediction. The accuracy is 61.11%. Sensitivity and Specificity are 44.44% and 77.78% respectively. The F1 score is 53.33%.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb107"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb107-1"><a href="#cb107-1" aria-hidden="true" tabindex="-1"></a>b_reduce<span class="ot">&lt;-</span><span class="fu">ifelse</span>(pred.reduce<span class="sc">&gt;</span><span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb107-2"><a href="#cb107-2" aria-hidden="true" tabindex="-1"></a>cm.reduce <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(<span class="at">reference=</span><span class="fu">as.factor</span>(levee.test<span class="sc">$</span>Failure),<span class="at">data=</span><span class="fu">as.factor</span>(b_reduce), <span class="at">mode=</span><span class="st">"everything"</span>)</span>
+<span id="cb107-3"><a href="#cb107-3" aria-hidden="true" tabindex="-1"></a>cm.reduce</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confusion Matrix and Statistics
+
+          Reference
+Prediction 0 1
+         0 4 2
+         1 5 7
+                                         
+               Accuracy : 0.6111         
+                 95% CI : (0.3575, 0.827)
+    No Information Rate : 0.5            
+    P-Value [Acc &gt; NIR] : 0.2403         
+                                         
+                  Kappa : 0.2222         
+                                         
+ Mcnemar's Test P-Value : 0.4497         
+                                         
+            Sensitivity : 0.4444         
+            Specificity : 0.7778         
+         Pos Pred Value : 0.6667         
+         Neg Pred Value : 0.5833         
+              Precision : 0.6667         
+                 Recall : 0.4444         
+                     F1 : 0.5333         
+             Prevalence : 0.5000         
+         Detection Rate : 0.2222         
+   Detection Prevalence : 0.3333         
+      Balanced Accuracy : 0.6111         
+                                         
+       'Positive' Class : 0              
+                                         </code></pre>
+</div>
+</div>
+<p>Same with the confusion matrix of dropped “Year” model, the model that after variable selection, there are 4 Ture Negative and 7 True Positive prediction, 5 False Positive and 2 False Negative in the prediction. Same accuracy, sensitivity, speificity and F1 score.</p>
+<p>Compared with all the model, which are full model, both model, null model, drop model and reduce model, we can see that overall the full model have the highest sensitivity and F1 score score, although the specificity is not the highest, we focus on the accuracy of correct prediction and accuracy of the result, we suggested that the full model is the best model in this case. The predictors in the best model are “Year”, “Sediments”, “Borrowpit”, “Meander”, “ChannelWidth”, “Flooddwaywidth”, “ConstricitionFactor”, “Landcover”, “VegWidth”, “Sinuosity”, “Dredging” and “Revetment”</p>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

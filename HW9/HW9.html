@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.353">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Hei Yee Lau">
+
+<title>HW9</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="HW9_files/libs/clipboard/clipboard.min.js"></script>
+<script src="HW9_files/libs/quarto-html/quarto.js"></script>
+<script src="HW9_files/libs/quarto-html/popper.min.js"></script>
+<script src="HW9_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="HW9_files/libs/quarto-html/anchor.min.js"></script>
+<link href="HW9_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="HW9_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="HW9_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="HW9_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="HW9_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">HW9</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Hei Yee Lau </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Consider the Kyphosis dataset in the R package rpart. The dataset has 81 rows and 4 columns representing data on children who have had corrective spinal surgery. The goal is to model the binary response Kyphosis, which indicates if a kyphosis (a type of deformation) was present or absent after the operation.</p>
+<p>(a). Use set.seed(123457) to do a 90-10 train-test split of the dataset, making sure that the proportion of the binary response Kyphosis = present is about the same in the train, test, and full data sets. Why is checking this important?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpart)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(kyphosis)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(kyphosis)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   81 obs. of  4 variables:
+ $ Kyphosis: Factor w/ 2 levels "absent","present": 1 1 2 1 1 1 1 1 1 2 ...
+ $ Age     : int  71 158 128 2 1 1 61 37 113 59 ...
+ $ Number  : int  3 3 4 5 4 2 2 3 2 6 ...
+ $ Start   : int  5 14 5 1 15 16 17 16 16 12 ...</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(kyphosis<span class="sc">$</span>Kyphosis)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ absent present 
+     64      17 </code></pre>
+</div>
+</div>
+<p>We can see that there are 64 absents and 17 presents in the dataset.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(kyphosis<span class="sc">$</span>Kyphosis)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] absent  present
+Levels: absent present</code></pre>
+</div>
+</div>
+<p>From the above code, we can see that there are only two level in the Kyphosis variable.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>kyphosis<span class="sc">$</span>Kyphosis <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(<span class="fu">ifelse</span>(kyphosis<span class="sc">$</span>Kyphosis <span class="sc">==</span> <span class="st">"present"</span>, <span class="dv">1</span>, <span class="dv">0</span>))</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(kyphosis,<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Kyphosis Age Number Start
+1        0  71      3     5
+2        0 158      3    14
+3        1 128      4     5
+4        0   2      5     1
+5        0   1      4    15</code></pre>
+</div>
+</div>
+<p>We would like to convert the Reponse Kyphosis to 0 or 1.</p>
+<p>In the following, I have set the seed to 2345678 to train the model and do the 90-10 traing test data split.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2345678</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>train.prop <span class="ot">&lt;-</span> <span class="fl">0.90</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>strats <span class="ot">&lt;-</span> kyphosis<span class="sc">$</span>Kyphosis</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>rr <span class="ot">&lt;-</span> <span class="fu">split</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(strats), strats)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>idx <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">as.numeric</span>(<span class="fu">unlist</span>(<span class="fu">sapply</span>(rr, </span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="cf">function</span>(x) <span class="fu">sample</span>(x, <span class="fu">length</span>(x)<span class="sc">*</span>train.prop)))))</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>kyphosis.train <span class="ot">&lt;-</span> kyphosis[idx, ]</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>kyphosis.test <span class="ot">&lt;-</span> kyphosis[<span class="sc">-</span>idx, ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We can see the proportions of the two levels of Kyphosis is similar from the training and entire dataset are similar, but the proportion of test data is sightly lower than others in the absent level but higher in the present level. But overall, the proportion of present level is about the same in train, test and entire datasets.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(kyphosis.train<span class="sc">$</span>Kyphosis)<span class="sc">/</span><span class="fu">nrow</span>(kyphosis.train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        0         1 
+0.7916667 0.2083333 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(kyphosis.test<span class="sc">$</span>Kyphosis)<span class="sc">/</span><span class="fu">nrow</span>(kyphosis.test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        0         1 
+0.7777778 0.2222222 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(kyphosis<span class="sc">$</span>Kyphosis)<span class="sc">/</span><span class="fu">nrow</span>(kyphosis)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        0         1 
+0.7901235 0.2098765 </code></pre>
+</div>
+</div>
+<p>It is important to check the proportion of the binary response “Kyphosis = present” in the train, test and full dataset because we need to ensure that the proportion of the target class is similar in both the train and test datasets is crucial to maintain the representativeness of the data. Otherwise, if one dataset has a significantly different class distribution, it can lean to biased model performance evaluations.</p>
+<p>A balanced distribution helps the model learn and generalize effectively. Moreover, having a balanced class distribution ensures that the evaluation metrics like accuracy, sensitivity and specificity are not biased by class imbalance. It can ensure that our model is trained and evaluated in a way that reflects its real-world performance.</p>
+<p>(b). Fit a logit regression model to Kyphosis using all available predictors. Also, fit the null model. Compare the AIC values between the two models. Which model does AIC prefer?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>full.logit<span class="ot">&lt;-</span> <span class="fu">glm</span>(Kyphosis<span class="sc">~</span>., <span class="at">data =</span> kyphosis.train, <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link=</span><span class="st">"logit"</span>))</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(full.logit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = Kyphosis ~ ., family = binomial(link = "logit"), 
+    data = kyphosis.train)
+
+Coefficients:
+             Estimate Std. Error z value Pr(&gt;|z|)   
+(Intercept) -3.670245   1.866185  -1.967  0.04922 * 
+Age          0.019701   0.008567   2.300  0.02147 * 
+Number       0.683625   0.302864   2.257  0.02400 * 
+Start       -0.247937   0.079180  -3.131  0.00174 **
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 73.691  on 71  degrees of freedom
+Residual deviance: 48.724  on 68  degrees of freedom
+AIC: 56.724
+
+Number of Fisher Scoring iterations: 6</code></pre>
+</div>
+</div>
+<p>In the full model, we have three predictors which are Age, Number and Start. We can see that the coefficient of intercept is -3.670245. When all other predictor variables are zero, the log-od of Kyphosis being present is approximately -3.670245. The coefficient of Age is 0.019701 which mean for every one-unit increase in the Age, the log-odds of having kyphosis increases by approximately 0.019701 Furthermore, we can see that all the variables are statistically significant to predict Kyphosis, since the p-value of all variables are smaller than the significant level (0.05)</p>
+<p>The dispersion parameter for binomial family is 1 which means the data’s variance matches the model’s predictions. The null deviance is 73.691 and residual deviance is 48.724 Since the residual deviance is smaller than the null deviance, which suggests the model with predictors is better fit than the null model. The AIC is 56.724.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>null.logit<span class="ot">&lt;-</span><span class="fu">glm</span>(Kyphosis<span class="sc">~</span><span class="dv">1</span>, <span class="at">data=</span>kyphosis.train, <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>))</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(null.logit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = Kyphosis ~ 1, family = binomial(link = "logit"), 
+    data = kyphosis.train)
+
+Coefficients:
+            Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)  -1.3350     0.2902    -4.6 4.22e-06 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 73.691  on 71  degrees of freedom
+Residual deviance: 73.691  on 71  degrees of freedom
+AIC: 75.691
+
+Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+</div>
+<p>In the null model, the coefficient of intercept is -1.3350, which mean when there is no predictor variable is considered, the log-odds is approximately -1.3350. Since the p-value is super small in the null model, which smaller than the significant level (0.05), it suggests that the intercept is highly significant in the model. The null deviance and residual deviance is the same, 73.691 and the AIC is 75.691.</p>
+<p>The AIC value for the full model with all predictors is 56.724. The AIC value for the null model is 75.691. Since a lower AIC value indicates a better trade-off between goodness of fit and model complexity. In the case, the full regression model with all predictors has a lower AIC (56.724) compared to the null model (75.691). Therefore, AIC prefers the model with all available predictors. This suggests that the model with predictors provides a better fit to the data compared to a model with just a constant term. Full model is preferred.</p>
+<p>(c). How will you use the roc curve and AUC in interpreting the full and null models? Compute using R code, and then explain.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pROC)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Type 'citation("pROC")' for a citation.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'pROC'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    cov, smooth, var</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test data accuracy</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>pred.full <span class="ot">&lt;-</span> <span class="fu">predict</span>(full.logit, <span class="at">newdata =</span> kyphosis.test, <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>pred.null <span class="ot">&lt;-</span> <span class="fu">predict</span>(null.logit, <span class="at">newdata =</span> kyphosis.test, <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute ROC and AUC for the full model</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>roc.full <span class="ot">&lt;-</span> <span class="fu">roc</span>(kyphosis.test<span class="sc">$</span>Kyphosis, pred.full, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Setting direction: controls &gt; cases</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>roc.full<span class="fl">.1</span><span class="ot">&lt;-</span><span class="fu">roc</span>(kyphosis.test<span class="sc">$</span>Kyphosis, pred.full,<span class="at">levels=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>),<span class="at">plot=</span>T,<span class="at">print.AUC=</span>T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Setting direction: controls &gt; cases</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="HW9_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">auc</span>(kyphosis.test<span class="sc">$</span>Kyphosis, pred.full)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Setting levels: control = 0, case = 1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Setting direction: controls &lt; cases</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Area under the curve: 0.7143</code></pre>
+</div>
+</div>
+<p>In the above coding and result, the setting direction is “controls &gt; cases” indicates that higher predicted values are associated with the control group (0), and lower predicted values are associated with the case group(1). An AUC of 0.7143 suggests that our model’s ability to distinguish between the two classes is fairly good.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute ROC and AUC for the full model</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>roc.null <span class="ot">&lt;-</span> <span class="fu">roc</span>(kyphosis.test<span class="sc">$</span>Kyphosis, pred.null, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Setting direction: controls &lt; cases</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>roc.null<span class="fl">.1</span><span class="ot">&lt;-</span><span class="fu">roc</span>(kyphosis.test<span class="sc">$</span>Kyphosis, pred.null,<span class="at">levels=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>),<span class="at">plot=</span>T,<span class="at">print.AUC=</span>T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Setting direction: controls &lt; cases</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="HW9_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">auc</span>(kyphosis.test<span class="sc">$</span>Kyphosis, pred.null)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Setting levels: control = 0, case = 1
+Setting direction: controls &lt; cases</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Area under the curve: 0.5</code></pre>
+</div>
+</div>
+<p>The AUC value of 0.5 for the null model suggests that the model is not able to discriminate between the Kyphosis present and Kyphosis absent. It might indicates random chance or no discriminatory power.</p>
+<p>After that, we can also check the accuracy of train data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Train data accuracy</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>pred.full <span class="ot">&lt;-</span> <span class="fu">predict</span>(full.logit, <span class="at">newdata =</span> kyphosis.train, <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>pred.null <span class="ot">&lt;-</span> <span class="fu">predict</span>(null.logit, <span class="at">newdata =</span> kyphosis.train, <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute ROC and AUC for the full and null models</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>roc.full <span class="ot">&lt;-</span> <span class="fu">roc</span>(kyphosis.train<span class="sc">$</span>Kyphosis, pred.full, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Setting direction: controls &gt; cases</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>roc.full<span class="fl">.1</span><span class="ot">&lt;-</span><span class="fu">roc</span>(kyphosis.train<span class="sc">$</span>Kyphosis, pred.full,<span class="at">levels=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>),<span class="at">plot=</span>T,<span class="at">print.AUC=</span>T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Setting direction: controls &gt; cases</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="HW9_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>auc.full <span class="ot">&lt;-</span> <span class="fu">auc</span>(roc.full)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>auc.full</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Area under the curve: 0.8713</code></pre>
+</div>
+</div>
+<p>The AUC value of 0.8713 for the full model on the training data indicates a moderate level of discriminatory power. It suggests that the full logistic regression model is able to distinguish between Kyphosis present and absent in the training data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Null model for train data</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>roc.null <span class="ot">&lt;-</span> <span class="fu">roc</span>(kyphosis.train<span class="sc">$</span>Kyphosis, pred.null, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Setting direction: controls &lt; cases</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>roc.null<span class="fl">.1</span><span class="ot">&lt;-</span><span class="fu">roc</span>(kyphosis.train<span class="sc">$</span>Kyphosis, pred.null,<span class="at">levels=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>),<span class="at">plot=</span>T,<span class="at">print.AUC=</span>T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Setting direction: controls &lt; cases</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="HW9_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>auc.null <span class="ot">&lt;-</span> <span class="fu">auc</span>(roc.null)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>auc.null</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Area under the curve: 0.5</code></pre>
+</div>
+</div>
+<p>Same with the result of test data in null model, the AUC is 0.5 which suggests that the model is not able to discriminate between the Kyphosis present and Kyphosis absent. We can see that the</p>
+<p>(d). Pull out and interpret the effect of Age on</p>
+<p>(i). the logit of the probability of presence of Kyphosis, and</p>
+<p>In the full model on above, the coefficient for “Age” is estimated as 0.019701 For each one-unit increase in Age, the log-odd of Kyphosis being present increase by 0.019701 This means that as Age increases, the log-odds of Kyphosis being present also increase. Older children have a higher log-odds of having Kyphosis, while younger children have a lower log-odds.</p>
+<p>The p-value for “Age” is 0.02147, which is smaller than the significant level (0.05). This suggests that the coefficient for “Age” is statistically significant, meaning that there is strong evidence that “Age” has a significant effect on the log-odds of Kyphosis being present.</p>
+<p>(ii). the probability of presence of Kyphosis.</p>
+<p>From the full model, to understand the effect on the probability of Kyphosis presence, we can use the logistic function (sigmoid function) to covert the log-odds to probabilities, which show the following:</p>
+<p>π(Age) = 1 / (1 + exp(-Coefficient * Age))</p>
+<p>Coefficient: 0.019701 π(Age) = 1 / (1 + exp(-0.019701 * Age))</p>
+<p>Assume Age = 10,Probability(Kyphosis = present): = 1 / (1 + exp(-0.019701 * 10)) =1/(1+exp(-0.19701)) =1/(1+0.82052) = 0.5497</p>
+<p>Therefore, take an example, if the age is 10, the estimated probability of Kyphosis presence is approximately 54.97%.</p>
+<p>With a positive coefficient of Age, the probability of Kyphosis presence increases as Age increases. This means that older children are more likely to have Kyphosis after operation compared to younger children. Conversely, for a one-unit decrease in Age, the probability of Kyphosis presence decreases. Younger children are less likely to have Kyphosis.</p>
+<p>(e). Carry out a test of hypothesis to see whether the regression coefficient β for Age is significantly different than zero. Write H0 and H1 both in notation and in words, write the formula for the z test statistic, and carry out the test. Hint. Keep in mind that unlike the MLR model, we do not have t or F-tests in GLIM, instead we have z (or Wald) and chi-square tests.</p>
+<p>Null Hypothesis (H0): β(Age)=0. There is no significant relationship between Age and the log-odds of Kyphosis being present.</p>
+<p>Alternative Hypothesis (H1) β(Age)!≠0. There is a significant relationship between Age and the log-odds of Kyphosis being present</p>
+<p>Formula for the z test statistic: Z= β/SE(β)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>summary_result <span class="ot">&lt;-</span> <span class="fu">summary</span>(full.logit)</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>z_test_age <span class="ot">&lt;-</span> summary_result<span class="sc">$</span>coefficients[<span class="st">"Age"</span>, <span class="fu">c</span>(<span class="st">"z value"</span>, <span class="st">"Pr(&gt;|z|)"</span>)]</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Z Value:"</span>, z_test_age[<span class="st">"z value"</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Z Value: 2.299536 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"P-Value:"</span>, z_test_age[<span class="st">"Pr(&gt;|z|)"</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>P-Value: 0.02147451 </code></pre>
+</div>
+</div>
+<p>The z-test for the “Age” coefficient resulted in a Z value of approximately 2.299536the p-value is 0.02147451 Since the p-value is smaller than the significant level (0.05), we have enough evidence to reject the null hypothesis and accept the alternative hypothesis.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(full.logit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Waiting for profiling to be done...</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                   2.5 %      97.5 %
+(Intercept) -7.748050442 -0.32705258
+Age          0.004635386  0.03893429
+Number       0.150970868  1.35257279
+Start       -0.420493467 -0.10359269</code></pre>
+</div>
+</div>
+<p>The 95% confidence interval for the “Age” coefficient, which ranges from 0.00464 to 0.0389, supports the significant of the “Age” coefficient. The interval does not include zero, which further indicates that the coefficient is statistically significant.</p>
+<p>Overall, based on both Z-Test and the confidence interval, there is sufficient evidence to reject the null hypothesis. Therefore, we have enough evidence to conclude that the regression coefficient for Age is significantly difference from zero. It suggests that Age have a significant effect on Kyphosis presence in the model.</p>
+<p>(f). Fit a reduced model removing the variables Number and Start from the full model. How will you use the test data to compare which is a better model: the full model or the reduced model?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>reduced.logit <span class="ot">&lt;-</span> <span class="fu">glm</span>(Kyphosis <span class="sc">~</span> Age, <span class="at">data =</span> kyphosis.train, <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>))</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(reduced.logit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = Kyphosis ~ Age, family = binomial(link = "logit"), 
+    data = kyphosis.train)
+
+Coefficients:
+             Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept) -1.932304   0.568743  -3.397  0.00068 ***
+Age          0.006735   0.005118   1.316  0.18815    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 73.691  on 71  degrees of freedom
+Residual deviance: 71.903  on 70  degrees of freedom
+AIC: 75.903
+
+Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+</div>
+<p>In the reduced model, the coefficient of intercept is -1.932304. The negative value suggests that at Age = 0, the log-odd of Kyphosis presence is negative which is low probability of Kyphosis. The coefficient of Age is 0.006735, indicates the effects of Age on the log-odds of Kyphosis presence if relatively small. A one-year increase in Age lead to 0.006735 increase in the log-odds of Kyphosis presence. In the model, the p-value of intercept is smaller than the significant level (0.05), which suggests that the intercept is statistically significant but Age has a larger p-value which has no significant effect on the log-odds of Kyphosis presence.</p>
+<p>The null deviance is 73.691 and the residual deviance is 71.903. The difference of null deviance and residual deviance is little but still show that the model with Age is better fit than the null model. The AIC value is 75.903.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: ggplot2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: lattice</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate predictions from the reduced model</span></span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>pred.reduced <span class="ot">&lt;-</span> <span class="fu">predict</span>(reduced.logit, <span class="at">newdata =</span> kyphosis.test, <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create binary predictions from probabilities</span></span>
+<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>b_reduced <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(pred.reduced <span class="sc">&gt;</span> <span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a>b_reduced <span class="ot">&lt;-</span> <span class="fu">factor</span>(b_reduced, <span class="at">levels =</span> <span class="fu">levels</span>(<span class="fu">as.factor</span>(kyphosis.test<span class="sc">$</span>Kyphosis)))</span>
+<span id="cb63-7"><a href="#cb63-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-8"><a href="#cb63-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the confusion matrix</span></span>
+<span id="cb63-9"><a href="#cb63-9" aria-hidden="true" tabindex="-1"></a>cm.reduced <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(<span class="at">reference =</span> <span class="fu">as.factor</span>(kyphosis.test<span class="sc">$</span>Kyphosis), <span class="at">data =</span> <span class="fu">as.factor</span>(b_reduced), <span class="at">mode =</span> <span class="st">"everything"</span>)</span>
+<span id="cb63-10"><a href="#cb63-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-11"><a href="#cb63-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the confusion matrix</span></span>
+<span id="cb63-12"><a href="#cb63-12" aria-hidden="true" tabindex="-1"></a>cm.reduced</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confusion Matrix and Statistics
+
+          Reference
+Prediction 0 1
+         0 7 2
+         1 0 0
+                                          
+               Accuracy : 0.7778          
+                 95% CI : (0.3999, 0.9719)
+    No Information Rate : 0.7778          
+    P-Value [Acc &gt; NIR] : 0.6781          
+                                          
+                  Kappa : 0               
+                                          
+ Mcnemar's Test P-Value : 0.4795          
+                                          
+            Sensitivity : 1.0000          
+            Specificity : 0.0000          
+         Pos Pred Value : 0.7778          
+         Neg Pred Value :    NaN          
+              Precision : 0.7778          
+                 Recall : 1.0000          
+                     F1 : 0.8750          
+             Prevalence : 0.7778          
+         Detection Rate : 0.7778          
+   Detection Prevalence : 1.0000          
+      Balanced Accuracy : 0.5000          
+                                          
+       'Positive' Class : 0               
+                                          </code></pre>
+</div>
+</div>
+<p>In the confusion matrix, there are 7 ture negative and 2 false positive. Both true positive and false negative are 0. The accuracy of the reduced model is 77.78%. The sensitivity is 1.00 which indicating that the model is very good at correctly predicting true positives. But the specificity is 0.00, suggesting that the model is not good at correctly prediciting true negative. The F1 score is 0.8750, indicating a reasonable balance between precision and recall. The recall is 1.</p>
+<p>We can also create the confusion matrix to the full model.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>pred.full <span class="ot">&lt;-</span> <span class="fu">predict</span>(full.logit, <span class="at">newdata =</span> kyphosis.test, <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>b_full <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(pred.full <span class="sc">&gt;</span> <span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the confusion matrix</span></span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>cm.full <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(<span class="at">reference =</span> <span class="fu">as.factor</span>(kyphosis.test<span class="sc">$</span>Kyphosis), <span class="at">data =</span> <span class="fu">as.factor</span>(b_full), <span class="at">mode =</span> <span class="st">"everything"</span>)</span>
+<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the confusion matrix</span></span>
+<span id="cb65-8"><a href="#cb65-8" aria-hidden="true" tabindex="-1"></a>cm.full</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confusion Matrix and Statistics
+
+          Reference
+Prediction 0 1
+         0 6 1
+         1 1 1
+                                          
+               Accuracy : 0.7778          
+                 95% CI : (0.3999, 0.9719)
+    No Information Rate : 0.7778          
+    P-Value [Acc &gt; NIR] : 0.6781          
+                                          
+                  Kappa : 0.3571          
+                                          
+ Mcnemar's Test P-Value : 1.0000          
+                                          
+            Sensitivity : 0.8571          
+            Specificity : 0.5000          
+         Pos Pred Value : 0.8571          
+         Neg Pred Value : 0.5000          
+              Precision : 0.8571          
+                 Recall : 0.8571          
+                     F1 : 0.8571          
+             Prevalence : 0.7778          
+         Detection Rate : 0.6667          
+   Detection Prevalence : 0.7778          
+      Balanced Accuracy : 0.6786          
+                                          
+       'Positive' Class : 0               
+                                          </code></pre>
+</div>
+</div>
+<p>In the confusion matrix of full model, there are 6 true negative and 1 true positive. In the prediction, there are 1 false positive and 1 false negative. The accuracy, sensitivity, specificity and F1 score of the model are 0.7778, 0.8571, 0.5000 and 0.8571. The recall is 0.8571.</p>
+<p>In this comparison, the reduced model performs better in terms of sensitivity and F1 score, indicating that it does a better job of correctly classifying positive cases. Even though the reduced model sacrifices specificity, making it less effective classifying negative cases. But, we would like to focus on classifying positive cases that is more critical, therefore, we would perfer the reduced model.</p>
+<p>(g). Find the best decision tree trained using the CART approach to classify the test data into 1 (presence of kyphosis) or 0 (absence of kyphosis). Make sure you compute and discuss all the metrics you have seen to assess the fit.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpart)</span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>fit.allp<span class="ot">&lt;-</span> <span class="fu">rpart</span>(Kyphosis<span class="sc">~</span>., <span class="at">method=</span><span class="st">"class"</span>, <span class="at">data=</span>kyphosis.train, <span class="at">control=</span><span class="fu">rpart.control</span>(<span class="at">minsplit=</span><span class="dv">1</span>, <span class="at">cp=</span><span class="fl">0.01</span>))</span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a><span class="fu">printcp</span>(fit.allp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Classification tree:
+rpart(formula = Kyphosis ~ ., data = kyphosis.train, method = "class", 
+    control = rpart.control(minsplit = 1, cp = 0.01))
+
+Variables actually used in tree construction:
+[1] Age    Number Start 
+
+Root node error: 15/72 = 0.20833
+
+n= 72 
+
+        CP nsplit rel error  xerror    xstd
+1 0.200000      0   1.00000 1.00000 0.22973
+2 0.133333      1   0.80000 1.33333 0.25337
+3 0.066667      3   0.53333 1.00000 0.22973
+4 0.033333      7   0.26667 0.93333 0.22388
+5 0.010000     15   0.00000 0.93333 0.22388</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>(rootnode_err<span class="ot">&lt;-</span><span class="fu">sum</span>(kyphosis.train<span class="sc">$</span>Kyphosis<span class="sc">==</span><span class="dv">1</span>)<span class="sc">/</span><span class="fu">nrow</span>(kyphosis.train))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.2083333</code></pre>
+</div>
+</div>
+<p>The tree used Age, Number, and Start as predictor variables. Root node error indicates the misclassification error at the root which is the starting point of the decision tree. In this case, the root node error is 0.20833 which means that initially, there is bout 20.83% of the cases were misclassified. We can see that the relative error for each level of the tree is decreases as the tree grows.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="fu">max</span>(fit.allp<span class="sc">$</span>cptable[,<span class="st">"nsplit"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 15</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="fu">min</span>(fit.allp<span class="sc">$</span>cptable[,<span class="st">"nsplit"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+<p>The maximum of the node is 15 and the minimum is 0.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>(<span class="at">cp=</span> fit.allp<span class="sc">$</span>cptable[<span class="fu">which.min</span>(fit.allp<span class="sc">$</span>cptable[, <span class="st">"xerror"</span>]), <span class="st">"CP"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.03333333</code></pre>
+</div>
+</div>
+<p>The calculated CP value is 0.03333333, which is the value of the complexity parameter that results in the minimum cross-validation prediction error for the decision tree model.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a>(<span class="at">xerr =</span> fit.allp<span class="sc">$</span>cptable[<span class="fu">which.min</span>(fit.allp<span class="sc">$</span>cptable[, <span class="st">"xerror"</span>]), <span class="st">"xerror"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.9333333</code></pre>
+</div>
+</div>
+<p>The calculated minimum cross-validated prediction error (xerror) is 0.9333333.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotcp</span>(fit.allp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="HW9_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>The plot in above display the complexity parameter values and their corresponding cross-validated error rates for the decision tree. We can see how the CP parameter affects the size and accuracy of the decision tree.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit.allp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Call:
+rpart(formula = Kyphosis ~ ., data = kyphosis.train, method = "class", 
+    control = rpart.control(minsplit = 1, cp = 0.01))
+  n= 72 
+
+          CP nsplit rel error    xerror      xstd
+1 0.20000000      0 1.0000000 1.0000000 0.2297341
+2 0.13333333      1 0.8000000 1.3333333 0.2533723
+3 0.06666667      3 0.5333333 1.0000000 0.2297341
+4 0.03333333      7 0.2666667 0.9333333 0.2238827
+5 0.01000000     15 0.0000000 0.9333333 0.2238827
+
+Variable importance
+   Age  Start Number 
+    43     41     15 
+
+Node number 1: 72 observations,    complexity param=0.2
+  predicted class=0  expected loss=0.2083333  P(node) =1
+    class counts:    57    15
+   probabilities: 0.792 0.208 
+  left son=2 (55 obs) right son=3 (17 obs)
+  Primary splits:
+      Start  &lt; 8.5   to the right, improve=6.423797, (0 missing)
+      Number &lt; 6.5   to the left,  improve=2.750000, (0 missing)
+      Age    &lt; 39    to the left,  improve=2.000000, (0 missing)
+  Surrogate splits:
+      Number &lt; 6.5   to the left,  agree=0.792, adj=0.118, (0 split)
+
+Node number 2: 55 observations,    complexity param=0.06666667
+  predicted class=0  expected loss=0.09090909  P(node) =0.7638889
+    class counts:    50     5
+   probabilities: 0.909 0.091 
+  left son=4 (26 obs) right son=5 (29 obs)
+  Primary splits:
+      Age    &lt; 81    to the left,  improve=0.8150470, (0 missing)
+      Start  &lt; 14.5  to the right, improve=0.7575758, (0 missing)
+      Number &lt; 2.5   to the left,  improve=0.2020202, (0 missing)
+  Surrogate splits:
+      Number &lt; 4.5   to the right, agree=0.6, adj=0.154, (0 split)
+      Start  &lt; 9.5   to the left,  agree=0.6, adj=0.154, (0 split)
+
+Node number 3: 17 observations,    complexity param=0.1333333
+  predicted class=1  expected loss=0.4117647  P(node) =0.2361111
+    class counts:     7    10
+   probabilities: 0.412 0.588 
+  left son=6 (13 obs) right son=7 (4 obs)
+  Primary splits:
+      Number &lt; 6     to the left,  improve=1.773756, (0 missing)
+      Age    &lt; 97.5  to the left,  improve=1.721008, (0 missing)
+      Start  &lt; 5.5   to the left,  improve=1.114082, (0 missing)
+
+Node number 4: 26 observations
+  predicted class=0  expected loss=0  P(node) =0.3611111
+    class counts:    26     0
+   probabilities: 1.000 0.000 
+
+Node number 5: 29 observations,    complexity param=0.06666667
+  predicted class=0  expected loss=0.1724138  P(node) =0.4027778
+    class counts:    24     5
+   probabilities: 0.828 0.172 
+  left son=10 (24 obs) right son=11 (5 obs)
+  Primary splits:
+      Age    &lt; 98    to the right, improve=2.2091950, (0 missing)
+      Start  &lt; 14.5  to the right, improve=1.2170390, (0 missing)
+      Number &lt; 4.5   to the left,  improve=0.6258621, (0 missing)
+
+Node number 6: 13 observations,    complexity param=0.1333333
+  predicted class=0  expected loss=0.4615385  P(node) =0.1805556
+    class counts:     7     6
+   probabilities: 0.538 0.462 
+  left son=12 (6 obs) right son=13 (7 obs)
+  Primary splits:
+      Age    &lt; 72    to the left,  improve=1.9377290, (0 missing)
+      Start  &lt; 7     to the left,  improve=0.6282051, (0 missing)
+      Number &lt; 3.5   to the left,  improve=0.5170940, (0 missing)
+  Surrogate splits:
+      Number &lt; 4.5   to the right, agree=0.615, adj=0.167, (0 split)
+      Start  &lt; 4     to the right, agree=0.615, adj=0.167, (0 split)
+
+Node number 7: 4 observations
+  predicted class=1  expected loss=0  P(node) =0.05555556
+    class counts:     0     4
+   probabilities: 0.000 1.000 
+
+Node number 10: 24 observations,    complexity param=0.03333333
+  predicted class=0  expected loss=0.08333333  P(node) =0.3333333
+    class counts:    22     2
+   probabilities: 0.917 0.083 
+  left son=20 (22 obs) right son=21 (2 obs)
+  Primary splits:
+      Start  &lt; 10.5  to the right, improve=0.7575758, (0 missing)
+      Age    &lt; 137.5 to the left,  improve=0.2380952, (0 missing)
+      Number &lt; 3.5   to the right, improve=0.2380952, (0 missing)
+
+Node number 11: 5 observations,    complexity param=0.06666667
+  predicted class=1  expected loss=0.4  P(node) =0.06944444
+    class counts:     2     3
+   probabilities: 0.400 0.600 
+  left son=22 (2 obs) right son=23 (3 obs)
+  Primary splits:
+      Start  &lt; 15    to the right, improve=2.400000, (0 missing)
+      Number &lt; 4.5   to the left,  improve=1.066667, (0 missing)
+      Age    &lt; 84.5  to the right, improve=0.400000, (0 missing)
+  Surrogate splits:
+      Number &lt; 4.5   to the left,  agree=0.8, adj=0.5, (0 split)
+
+Node number 12: 6 observations,    complexity param=0.03333333
+  predicted class=0  expected loss=0.1666667  P(node) =0.08333333
+    class counts:     5     1
+   probabilities: 0.833 0.167 
+  left son=24 (4 obs) right son=25 (2 obs)
+  Primary splits:
+      Start  &lt; 5.5   to the left,  improve=0.6666667, (0 missing)
+      Age    &lt; 35    to the left,  improve=0.3333333, (0 missing)
+      Number &lt; 4.5   to the left,  improve=0.3333333, (0 missing)
+
+Node number 13: 7 observations,    complexity param=0.06666667
+  predicted class=1  expected loss=0.2857143  P(node) =0.09722222
+    class counts:     2     5
+   probabilities: 0.286 0.714 
+  left son=26 (1 obs) right son=27 (6 obs)
+  Primary splits:
+      Age    &lt; 130.5 to the right, improve=1.1904760, (0 missing)
+      Number &lt; 2.5   to the left,  improve=1.1904760, (0 missing)
+      Start  &lt; 4     to the left,  improve=0.4571429, (0 missing)
+
+Node number 20: 22 observations,    complexity param=0.03333333
+  predicted class=0  expected loss=0.04545455  P(node) =0.3055556
+    class counts:    21     1
+   probabilities: 0.955 0.045 
+  left son=40 (14 obs) right son=41 (8 obs)
+  Primary splits:
+      Age    &lt; 154   to the left,  improve=0.15909090, (0 missing)
+      Start  &lt; 13.5  to the right, improve=0.15909090, (0 missing)
+      Number &lt; 3.5   to the right, improve=0.06293706, (0 missing)
+  Surrogate splits:
+      Start &lt; 16.5  to the left,  agree=0.727, adj=0.25, (0 split)
+
+Node number 21: 2 observations,    complexity param=0.03333333
+  predicted class=0  expected loss=0.5  P(node) =0.02777778
+    class counts:     1     1
+   probabilities: 0.500 0.500 
+  left son=42 (1 obs) right son=43 (1 obs)
+  Primary splits:
+      Age    &lt; 172.5 to the right, improve=1, (0 missing)
+      Number &lt; 3.5   to the right, improve=1, (0 missing)
+
+Node number 22: 2 observations
+  predicted class=0  expected loss=0  P(node) =0.02777778
+    class counts:     2     0
+   probabilities: 1.000 0.000 
+
+Node number 23: 3 observations
+  predicted class=1  expected loss=0  P(node) =0.04166667
+    class counts:     0     3
+   probabilities: 0.000 1.000 
+
+Node number 24: 4 observations
+  predicted class=0  expected loss=0  P(node) =0.05555556
+    class counts:     4     0
+   probabilities: 1.000 0.000 
+
+Node number 25: 2 observations,    complexity param=0.03333333
+  predicted class=0  expected loss=0.5  P(node) =0.02777778
+    class counts:     1     1
+   probabilities: 0.500 0.500 
+  left son=50 (1 obs) right son=51 (1 obs)
+  Primary splits:
+      Age    &lt; 30    to the left,  improve=1, (0 missing)
+      Number &lt; 4     to the left,  improve=1, (0 missing)
+
+Node number 26: 1 observations
+  predicted class=0  expected loss=0  P(node) =0.01388889
+    class counts:     1     0
+   probabilities: 1.000 0.000 
+
+Node number 27: 6 observations,    complexity param=0.03333333
+  predicted class=1  expected loss=0.1666667  P(node) =0.08333333
+    class counts:     1     5
+   probabilities: 0.167 0.833 
+  left son=54 (2 obs) right son=55 (4 obs)
+  Primary splits:
+      Age    &lt; 100.5 to the left,  improve=0.6666667, (0 missing)
+      Start  &lt; 2     to the left,  improve=0.3333333, (0 missing)
+      Number &lt; 4.5   to the left,  improve=0.1666667, (0 missing)
+  Surrogate splits:
+      Start &lt; 2     to the left,  agree=0.833, adj=0.5, (0 split)
+
+Node number 40: 14 observations
+  predicted class=0  expected loss=0  P(node) =0.1944444
+    class counts:    14     0
+   probabilities: 1.000 0.000 
+
+Node number 41: 8 observations,    complexity param=0.03333333
+  predicted class=0  expected loss=0.125  P(node) =0.1111111
+    class counts:     7     1
+   probabilities: 0.875 0.125 
+  left son=82 (7 obs) right son=83 (1 obs)
+  Primary splits:
+      Age    &lt; 157.5 to the right, improve=1.75, (0 missing)
+      Start  &lt; 13.5  to the right, improve=0.75, (0 missing)
+      Number &lt; 3.5   to the right, improve=0.15, (0 missing)
+
+Node number 42: 1 observations
+  predicted class=0  expected loss=0  P(node) =0.01388889
+    class counts:     1     0
+   probabilities: 1.000 0.000 
+
+Node number 43: 1 observations
+  predicted class=1  expected loss=0  P(node) =0.01388889
+    class counts:     0     1
+   probabilities: 0.000 1.000 
+
+Node number 50: 1 observations
+  predicted class=0  expected loss=0  P(node) =0.01388889
+    class counts:     1     0
+   probabilities: 1.000 0.000 
+
+Node number 51: 1 observations
+  predicted class=1  expected loss=0  P(node) =0.01388889
+    class counts:     0     1
+   probabilities: 0.000 1.000 
+
+Node number 54: 2 observations,    complexity param=0.03333333
+  predicted class=0  expected loss=0.5  P(node) =0.02777778
+    class counts:     1     1
+   probabilities: 0.500 0.500 
+  left son=108 (1 obs) right son=109 (1 obs)
+  Primary splits:
+      Age    &lt; 77    to the right, improve=1, (0 missing)
+      Number &lt; 4.5   to the left,  improve=1, (0 missing)
+
+Node number 55: 4 observations
+  predicted class=1  expected loss=0  P(node) =0.05555556
+    class counts:     0     4
+   probabilities: 0.000 1.000 
+
+Node number 82: 7 observations
+  predicted class=0  expected loss=0  P(node) =0.09722222
+    class counts:     7     0
+   probabilities: 1.000 0.000 
+
+Node number 83: 1 observations
+  predicted class=1  expected loss=0  P(node) =0.01388889
+    class counts:     0     1
+   probabilities: 0.000 1.000 
+
+Node number 108: 1 observations
+  predicted class=0  expected loss=0  P(node) =0.01388889
+    class counts:     1     0
+   probabilities: 1.000 0.000 
+
+Node number 109: 1 observations
+  predicted class=1  expected loss=0  P(node) =0.01388889
+    class counts:     0     1
+   probabilities: 0.000 1.000 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(fit.allp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>n= 72 
+
+node), split, n, loss, yval, (yprob)
+      * denotes terminal node
+
+  1) root 72 15 0 (0.79166667 0.20833333)  
+    2) Start&gt;=8.5 55  5 0 (0.90909091 0.09090909)  
+      4) Age&lt; 81 26  0 0 (1.00000000 0.00000000) *
+      5) Age&gt;=81 29  5 0 (0.82758621 0.17241379)  
+       10) Age&gt;=98 24  2 0 (0.91666667 0.08333333)  
+         20) Start&gt;=10.5 22  1 0 (0.95454545 0.04545455)  
+           40) Age&lt; 154 14  0 0 (1.00000000 0.00000000) *
+           41) Age&gt;=154 8  1 0 (0.87500000 0.12500000)  
+             82) Age&gt;=157.5 7  0 0 (1.00000000 0.00000000) *
+             83) Age&lt; 157.5 1  0 1 (0.00000000 1.00000000) *
+         21) Start&lt; 10.5 2  1 0 (0.50000000 0.50000000)  
+           42) Age&gt;=172.5 1  0 0 (1.00000000 0.00000000) *
+           43) Age&lt; 172.5 1  0 1 (0.00000000 1.00000000) *
+       11) Age&lt; 98 5  2 1 (0.40000000 0.60000000)  
+         22) Start&gt;=15 2  0 0 (1.00000000 0.00000000) *
+         23) Start&lt; 15 3  0 1 (0.00000000 1.00000000) *
+    3) Start&lt; 8.5 17  7 1 (0.41176471 0.58823529)  
+      6) Number&lt; 6 13  6 0 (0.53846154 0.46153846)  
+       12) Age&lt; 72 6  1 0 (0.83333333 0.16666667)  
+         24) Start&lt; 5.5 4  0 0 (1.00000000 0.00000000) *
+         25) Start&gt;=5.5 2  1 0 (0.50000000 0.50000000)  
+           50) Age&lt; 30 1  0 0 (1.00000000 0.00000000) *
+           51) Age&gt;=30 1  0 1 (0.00000000 1.00000000) *
+       13) Age&gt;=72 7  2 1 (0.28571429 0.71428571)  
+         26) Age&gt;=130.5 1  0 0 (1.00000000 0.00000000) *
+         27) Age&lt; 130.5 6  1 1 (0.16666667 0.83333333)  
+           54) Age&lt; 100.5 2  1 0 (0.50000000 0.50000000)  
+            108) Age&gt;=77 1  0 0 (1.00000000 0.00000000) *
+            109) Age&lt; 77 1  0 1 (0.00000000 1.00000000) *
+           55) Age&gt;=100.5 4  0 1 (0.00000000 1.00000000) *
+      7) Number&gt;=6 4  0 1 (0.00000000 1.00000000) *</code></pre>
+</div>
+</div>
+<p>Here we can visualize the decision tree.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpart.plot)</span>
+<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rpart.plot</span>(fit.allp, <span class="at">extra =</span> <span class="st">"auto"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="HW9_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit.allp, <span class="at">uniform =</span> <span class="cn">TRUE</span>, <span class="at">main =</span> <span class="st">" "</span>)</span>
+<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(fit.allp, <span class="at">use.n =</span> <span class="cn">TRUE</span>, <span class="at">all =</span> <span class="cn">TRUE</span>, <span class="at">cex =</span> .<span class="dv">8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="HW9_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>In the above summary and plots, the tree is displayed as a hierarchy of nodes, where each node represents a decision point or terminal outcome. Node numbers are assigned to each node in the tree.</p>
+<p>In the plot, there are three numbers associated with each node. The top one is represent the predicted class which are 0 or 1, that 0 indicate Kyphosis is absent and 1 indicate Kyphosis is present. The middle number is typically associated with the probability or likelihood of an instance falling into this node being assigned to a particular class. For example, if the number is 0.59, indicating that there is a 59% probability of an instance in this node belonging to that class. Finally, there is a percentage in every node. It is to express the probability associated with one of the class labels. For example, 24%, is means that approximately 24% of the instance in the node are likely to be classified as that particular class.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test with the fit decision tree</span></span>
+<span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a>test_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">actual =</span> kyphosis.test<span class="sc">$</span>Kyphosis, <span class="at">pred =</span> <span class="cn">NA</span>)</span>
+<span id="cb86-3"><a href="#cb86-3" aria-hidden="true" tabindex="-1"></a>test_df<span class="sc">$</span>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit.allp, <span class="at">newdata =</span> kyphosis.test, <span class="at">type =</span> <span class="st">"class"</span>)</span>
+<span id="cb86-4"><a href="#cb86-4" aria-hidden="true" tabindex="-1"></a>(conf_matrix_base <span class="ot">&lt;-</span> <span class="fu">table</span>(test_df<span class="sc">$</span>actual, test_df<span class="sc">$</span>pred)) <span class="co">#confusion matrix</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   
+    0 1
+  0 6 1
+  1 1 1</code></pre>
+</div>
+</div>
+<p>The confusion matrix shows that 6 cases are correctly classified as 0, while 1 was correctly classified as 1. The rest were misclassified.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sensitivity</span>(conf_matrix_base)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.8571429</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="fu">specificity</span>(conf_matrix_base)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.5</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a>(mis.rate <span class="ot">&lt;-</span> conf_matrix_base[<span class="dv">1</span>, <span class="dv">2</span>] <span class="sc">+</span> </span>
+<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a>   conf_matrix_base[<span class="dv">2</span>, <span class="dv">1</span>])<span class="sc">/</span><span class="fu">sum</span>(conf_matrix_base) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.2222222</code></pre>
+</div>
+</div>
+<p>The sensitivity is 0.8571429, the specificity is 0.5, while the overall misclassification rate is about 0.2222.</p>
+<p>In the following, we would prun the tree to improve the generalization ability of the model and also prevent the overfitting.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a>pfit.allp <span class="ot">&lt;-</span> <span class="fu">prune</span>(fit.allp, <span class="at">cp =</span> fit.allp<span class="sc">$</span>cptable[<span class="fu">which.min</span>(fit.allp<span class="sc">$</span>cptable[, <span class="st">"xerror"</span>]), <span class="st">"CP"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpart.plot)</span>
+<span id="cb95-2"><a href="#cb95-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rpart.plot</span>(pfit.allp, <span class="at">extra =</span> <span class="st">"auto"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="HW9_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test with the prun decision tree</span></span>
+<span id="cb96-2"><a href="#cb96-2" aria-hidden="true" tabindex="-1"></a>test_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">actual =</span> kyphosis.test<span class="sc">$</span>Kyphosis, <span class="at">pred =</span> <span class="cn">NA</span>)</span>
+<span id="cb96-3"><a href="#cb96-3" aria-hidden="true" tabindex="-1"></a>test_df<span class="sc">$</span>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(pfit.allp, <span class="at">newdata =</span> kyphosis.test, <span class="at">type =</span> <span class="st">"class"</span>)</span>
+<span id="cb96-4"><a href="#cb96-4" aria-hidden="true" tabindex="-1"></a>(conf_matrix_base_p <span class="ot">&lt;-</span> <span class="fu">table</span>(test_df<span class="sc">$</span>actual, test_df<span class="sc">$</span>pred)) <span class="co">#confusion matrix</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   
+    0 1
+  0 6 1
+  1 1 1</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sensitivity</span>(conf_matrix_base_p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.8571429</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb100"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a><span class="fu">specificity</span>(conf_matrix_base_p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.5</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb102"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a>(mis.rate <span class="ot">&lt;-</span> conf_matrix_base_p[<span class="dv">1</span>, <span class="dv">2</span>] <span class="sc">+</span> </span>
+<span id="cb102-2"><a href="#cb102-2" aria-hidden="true" tabindex="-1"></a>   conf_matrix_base_p[<span class="dv">2</span>, <span class="dv">1</span>])<span class="sc">/</span><span class="fu">sum</span>(conf_matrix_base_p) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.2222222</code></pre>
+</div>
+</div>
+<p>The sensitivity is 0.8571429, the specificity is 0.5, while the overall misclassification rate is about 0.2222.</p>
+<p>Overall, we can see that the result of sensitivity, specificity and misclassification rate is same for full decision tree and pruned decision tree. Therefore, both of them are the best decision tree.</p>
+<p>(h). Use the R package ranger to train a random forest to the data and then validate on the test data. Optional. For this data, can you also try and run the randomForestSRC package and compare the run times for the two packages?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb104"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ranger)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'ranger' was built under R version 4.3.2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb106"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb106-1"><a href="#cb106-1" aria-hidden="true" tabindex="-1"></a>fit.rf.ranger<span class="ot">&lt;-</span> <span class="fu">ranger</span>(Kyphosis<span class="sc">~</span> .,<span class="at">data=</span>kyphosis.train, <span class="at">importance =</span> <span class="st">'impurity'</span>, <span class="at">mtry =</span> <span class="dv">3</span> )</span>
+<span id="cb106-2"><a href="#cb106-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(fit.rf.ranger)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Ranger result
+
+Call:
+ ranger(Kyphosis ~ ., data = kyphosis.train, importance = "impurity",      mtry = 3) 
+
+Type:                             Classification 
+Number of trees:                  500 
+Sample size:                      72 
+Number of independent variables:  3 
+Mtry:                             3 
+Target node size:                 1 
+Variable importance mode:         impurity 
+Splitrule:                        gini 
+OOB prediction error:             18.06 % </code></pre>
+</div>
+</div>
+<p>In the above result, this is a classification problem and there are 500 decision trees were created and combined to make decision. There are 72 observations and 3 predictors in the training dataset. We set Mtry to 3 that represents the number of variables considered at each split in a decision tree. The target node size specifies the minimum node size for terminal nodes in the decision tree. We set it to 1 so that the trees are allowed to continue splitting nodes until there is only one observation in each terminal node. We use gini index to measure the impurity in decision tree algorithms. The out-of-bag prediction error is an estimate of how well the random forest model is likely to perform on new, unseen data. It is reported as 18.06%, which means that the model is expected to make errors on about 18.06% of new, unseen data points.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb108"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb108-1"><a href="#cb108-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(vip)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'vip' was built under R version 4.3.2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'vip'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:utils':
+
+    vi</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb112"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a>(v1<span class="ot">&lt;-</span><span class="fu">vi</span>(fit.rf.ranger))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 2
+  Variable Importance
+  &lt;chr&gt;         &lt;dbl&gt;
+1 Start          9.65
+2 Age            9.13
+3 Number         4.70</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb114"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb114-1"><a href="#cb114-1" aria-hidden="true" tabindex="-1"></a><span class="fu">vip</span>(v1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="HW9_files/figure-html/unnamed-chunk-41-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>We have calculate the variable importance for a random forest model created with the “ranger” function. For “Start” has an importance score of approximately 9.645254 “Age” has an importance score of approximately 9.128193 “Number” has an importance score of approximately 4.696776, which also plot a graph for the importance score.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb115"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit.rf.ranger, <span class="at">data =</span> kyphosis.test)</span>
+<span id="cb115-2"><a href="#cb115-2" aria-hidden="true" tabindex="-1"></a>test_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">actual =</span> kyphosis.test<span class="sc">$</span>Kyphosis, <span class="at">pred =</span> <span class="cn">NA</span>)</span>
+<span id="cb115-3"><a href="#cb115-3" aria-hidden="true" tabindex="-1"></a>test_df<span class="sc">$</span>pred <span class="ot">&lt;-</span> pred<span class="sc">$</span>predictions</span>
+<span id="cb115-4"><a href="#cb115-4" aria-hidden="true" tabindex="-1"></a>(conf_matrix_rf <span class="ot">&lt;-</span> <span class="fu">table</span>(test_df<span class="sc">$</span>actual, test_df<span class="sc">$</span>pred)) <span class="co">#confusion matrix</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   
+    0 1
+  0 6 1
+  1 1 1</code></pre>
+</div>
+</div>
+<p>For the random forest using ranger function, there are 6 true negative, 1 true positive, 1 false positive and 1 false negative in the confusion matrix.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb117"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb117-1"><a href="#cb117-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret)</span>
+<span id="cb117-2"><a href="#cb117-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Sensitivity</span></span>
+<span id="cb117-3"><a href="#cb117-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sensitivity</span>(conf_matrix_rf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.8571429</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb119"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb119-1"><a href="#cb119-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Specificity</span></span>
+<span id="cb119-2"><a href="#cb119-2" aria-hidden="true" tabindex="-1"></a><span class="fu">specificity</span>(conf_matrix_rf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.5</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb121"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb121-1"><a href="#cb121-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Missclassification error rate:</span></span>
+<span id="cb121-2"><a href="#cb121-2" aria-hidden="true" tabindex="-1"></a>(conf_matrix_rf[<span class="dv">1</span>,<span class="dv">2</span>] <span class="sc">+</span> conf_matrix_rf[<span class="dv">2</span>,<span class="dv">1</span>])<span class="sc">/</span><span class="fu">sum</span>(conf_matrix_rf) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.2222222</code></pre>
+</div>
+</div>
+<p>The sensitivity is 0.8571429. Specificity is 0.5 and the misclassification error rate is 0.2222222.</p>
+<p>We can see that the performance of the random forest model from ranger have the same performance with the best decision tree.</p>
+<p>In the following, I am goning to try and run the randomForestSRC package.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb123"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb123-1"><a href="#cb123-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(randomForestSRC)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'randomForestSRC' was built under R version 4.3.2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+ randomForestSRC 3.2.2 
+ 
+ Type rfsrc.news() to see new features, changes, and bug fixes. 
+ </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb126"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb126-1"><a href="#cb126-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234567</span>)</span>
+<span id="cb126-2"><a href="#cb126-2" aria-hidden="true" tabindex="-1"></a>rf_model_rfsrc<span class="ot">&lt;-</span><span class="fu">rfsrc</span>(Kyphosis<span class="sc">~</span> ., <span class="at">data=</span>kyphosis.train)</span>
+<span id="cb126-3"><a href="#cb126-3" aria-hidden="true" tabindex="-1"></a>rf_model_rfsrc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                         Sample size: 72
+           Frequency of class labels: 57, 15
+                     Number of trees: 500
+           Forest terminal node size: 1
+       Average no. of terminal nodes: 11.97
+No. of variables tried at each split: 2
+              Total no. of variables: 3
+       Resampling used to grow trees: swor
+    Resample size used to grow trees: 46
+                            Analysis: RF-C
+                              Family: class
+                      Splitting rule: gini *random*
+       Number of random split points: 10
+                    Imbalanced ratio: 3.8
+                   (OOB) Brier score: 0.14185669
+        (OOB) Normalized Brier score: 0.56742678
+                           (OOB) AUC: 0.78947368
+                        (OOB) PR-AUC: 0.43942942
+                        (OOB) G-mean: 0.6098605
+   (OOB) Requested performance error: 0.18055556, 0.07017544, 0.6
+
+Confusion matrix:
+
+          predicted
+  observed  0 1 class.error
+         0 53 4      0.0702
+         1  9 6      0.6000
+
+      (OOB) Misclassification rate: 0.1805556</code></pre>
+</div>
+</div>
+<p>Same as ranger, we use classification method. Especially, we can see the Brier score, AUC, G-mean and the Requested performance. The brier score and the normalized brier score are 0.14 and 0.56 that are a metric for assessing the accuracy of probabilistic prediction, evaluates the model’s performance using samples that were not used during training. The AUC and PR-AUC are 0.79 and 0.44 which also is the classification model performance. The G-mean is 0.61 and the requested performance error is 0.18, 0.07, 0.6.</p>
+<p>In the confusion matrix, it shows that there are 53 True negatives, 4 False positives, 9 False negative and 6 True positives. The out-of-bag misclassification rate is 0.18, represents the overall classification error based on out-of-bag samples.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb128"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb128-1"><a href="#cb128-1" aria-hidden="true" tabindex="-1"></a>rf_pred_rfsrc <span class="ot">&lt;-</span> <span class="fu">predict</span>(rf_model_rfsrc, <span class="at">data =</span> kyphosis.test)<span class="sc">$</span>predicted</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb129"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb129-1"><a href="#cb129-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Measure run time for ranger</span></span>
+<span id="cb129-2"><a href="#cb129-2" aria-hidden="true" tabindex="-1"></a>ranger_time <span class="ot">&lt;-</span> <span class="fu">system.time</span>({</span>
+<span id="cb129-3"><a href="#cb129-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ranger</span>(Kyphosis <span class="sc">~</span> ., <span class="at">data =</span> kyphosis.train)</span>
+<span id="cb129-4"><a href="#cb129-4" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb129-5"><a href="#cb129-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb129-6"><a href="#cb129-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Measure run time for randomForestSRC</span></span>
+<span id="cb129-7"><a href="#cb129-7" aria-hidden="true" tabindex="-1"></a>rfsrc_time <span class="ot">&lt;-</span> <span class="fu">system.time</span>({</span>
+<span id="cb129-8"><a href="#cb129-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rfsrc</span>(Kyphosis <span class="sc">~</span> ., <span class="at">data =</span> kyphosis.train)</span>
+<span id="cb129-9"><a href="#cb129-9" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb129-10"><a href="#cb129-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb129-11"><a href="#cb129-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare the run times</span></span>
+<span id="cb129-12"><a href="#cb129-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(ranger_time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   user  system elapsed 
+      0       0       0 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb131"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb131-1"><a href="#cb131-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(rfsrc_time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   user  system elapsed 
+   0.00    0.00    0.01 </code></pre>
+</div>
+</div>
+<p>To compare the run time of two difference random forest algorithms, there are three times, which are user time, system time and elapsed time. User time is the amount of CPU time used by the user’s code. For ranger, the user time is 0.01 and for rfsrc is 0.02. System time is the amount of CPU time used by the operating system for system-level operations, like I/O operations. For ranger and rfsrc are both 0.00 in system time. Finally, elapsed time is the total time elapsed from the start of the code execution to its completion. This includes both user time and system time. For ranger, the time is 0.02 and for rfsrc is 0.03 second.</p>
+<p>It suggests that ranger used less CPU time in the user model compared to ranger for this specific dtaset and task and also less elapsed time from the start of the code execution to its completion. Therefore, it suggested that ranger is run more faster than rfsrc.</p>
+<p>(i). Use and discuss the XGBooost approach to analyze the Kyphosis dataset.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb133"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb133-1"><a href="#cb133-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(xgboost)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'xgboost' was built under R version 4.3.2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb135"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb135-1"><a href="#cb135-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Matrix)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We would like to transforming the predictor matrics using dummy encoding. In the following, we have transform the train and test data into two matrices which are “matrix_predictors.train” and “matrix_predictors.test” that have been encoded using dummy variables, making them suitable for use in machine learning models that require numerical input.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb136"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb136-1"><a href="#cb136-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Transform the predictor matrix using dummy (or indictor or one-hot) encoding </span></span>
+<span id="cb136-2"><a href="#cb136-2" aria-hidden="true" tabindex="-1"></a>matrix_predictors.train <span class="ot">&lt;-</span> </span>
+<span id="cb136-3"><a href="#cb136-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.matrix</span>(<span class="fu">sparse.model.matrix</span>(Kyphosis <span class="sc">~</span>., <span class="at">data =</span> kyphosis.train))[, <span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb136-4"><a href="#cb136-4" aria-hidden="true" tabindex="-1"></a>matrix_predictors.test <span class="ot">&lt;-</span> </span>
+<span id="cb136-5"><a href="#cb136-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.matrix</span>(<span class="fu">sparse.model.matrix</span>(Kyphosis <span class="sc">~</span>., <span class="at">data =</span> kyphosis.test))[, <span class="sc">-</span><span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We would extract the predictor variables from the training dataset and converts them into a matrix. Moreover, converts the factor Kyphosis in the training dataset to a numeric vector. Same as the testing dataset.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb137"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb137-1"><a href="#cb137-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Train dataset</span></span>
+<span id="cb137-2"><a href="#cb137-2" aria-hidden="true" tabindex="-1"></a>pred.train.gbm <span class="ot">&lt;-</span> <span class="fu">data.matrix</span>(matrix_predictors.train) <span class="co"># predictors only</span></span>
+<span id="cb137-3"><a href="#cb137-3" aria-hidden="true" tabindex="-1"></a><span class="co">#convert factor to numeric</span></span>
+<span id="cb137-4"><a href="#cb137-4" aria-hidden="true" tabindex="-1"></a>kyphosis.train.gbm <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">as.character</span>(kyphosis.train<span class="sc">$</span>Kyphosis)) </span>
+<span id="cb137-5"><a href="#cb137-5" aria-hidden="true" tabindex="-1"></a>dtrain <span class="ot">&lt;-</span> <span class="fu">xgb.DMatrix</span>(<span class="at">data =</span> pred.train.gbm, <span class="at">label =</span> kyphosis.train.gbm)</span>
+<span id="cb137-6"><a href="#cb137-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Test dataset</span></span>
+<span id="cb137-7"><a href="#cb137-7" aria-hidden="true" tabindex="-1"></a>pred.test.gbm <span class="ot">&lt;-</span> <span class="fu">data.matrix</span>(matrix_predictors.test) <span class="co"># predictors only</span></span>
+<span id="cb137-8"><a href="#cb137-8" aria-hidden="true" tabindex="-1"></a> <span class="co">#convert factor to numeric</span></span>
+<span id="cb137-9"><a href="#cb137-9" aria-hidden="true" tabindex="-1"></a>kyphosis.test.gbm <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">as.character</span>(kyphosis.test<span class="sc">$</span>Kyphosis))</span>
+<span id="cb137-10"><a href="#cb137-10" aria-hidden="true" tabindex="-1"></a>dtest <span class="ot">&lt;-</span> <span class="fu">xgb.DMatrix</span>(<span class="at">data =</span> pred.test.gbm, <span class="at">label =</span> kyphosis.test.gbm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We have set up the watchlist and parameter configurations for training an xgboost model.</p>
+<p>watchlist is a list specifying the datasets for monitoring during the training process. It includes the training dataset and the test dataset. This allows us to evaluate the model’s performance on both datasets during training</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb138"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb138-1"><a href="#cb138-1" aria-hidden="true" tabindex="-1"></a>watchlist <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">train =</span> dtrain, <span class="at">test =</span> dtest)</span>
+<span id="cb138-2"><a href="#cb138-2" aria-hidden="true" tabindex="-1"></a>param <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">max_depth =</span> <span class="dv">2</span>, <span class="at">eta =</span> <span class="dv">1</span>, <span class="at">nthread =</span> <span class="dv">2</span>,</span>
+<span id="cb138-3"><a href="#cb138-3" aria-hidden="true" tabindex="-1"></a><span class="at">objective =</span> <span class="st">"binary:logistic"</span>, <span class="at">eval_metric =</span> <span class="st">"auc"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb139"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb139-1"><a href="#cb139-1" aria-hidden="true" tabindex="-1"></a>model.xgb <span class="ot">&lt;-</span> <span class="fu">xgb.train</span>(param, dtrain, <span class="at">nrounds =</span> <span class="dv">2</span>, watchlist)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] train-auc:0.790643  test-auc:0.678571 
+[2] train-auc:0.890058  test-auc:0.821429 </code></pre>
+</div>
+</div>
+<p>We would like ot monitoring the area under the receiver operating characteristic curve (AUC) on both the training an testing datasets for two rounds.</p>
+<p>For the first round, train-auc is 0.790643 and test-auc is 0.678571. In the second round, train-auc is 0.890058 and test-auc is 0.821429.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb141"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb141-1"><a href="#cb141-1" aria-hidden="true" tabindex="-1"></a>pred.y.train <span class="ot">&lt;-</span> <span class="fu">predict</span>(model.xgb, pred.train.gbm)</span>
+<span id="cb141-2"><a href="#cb141-2" aria-hidden="true" tabindex="-1"></a>prediction.train <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(pred.y.train <span class="sc">&gt;</span> <span class="fl">0.5</span>)</span>
+<span id="cb141-3"><a href="#cb141-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Measure prediction accuracy on train data</span></span>
+<span id="cb141-4"><a href="#cb141-4" aria-hidden="true" tabindex="-1"></a>(tab<span class="ot">&lt;-</span><span class="fu">table</span>(kyphosis.train.gbm, prediction.train))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                  prediction.train
+kyphosis.train.gbm  0  1
+                 0 56  1
+                 1  6  9</code></pre>
+</div>
+</div>
+<p>We would like to calculated the prediction accuracy on our training data using XGBoost model. In the confusion matrix, there are 56 true negative, 1 false positive, 6 false negative and 9 true positive.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb143"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb143-1"><a href="#cb143-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">diag</span>(tab))<span class="sc">/</span><span class="fu">sum</span>(tab)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.9027778</code></pre>
+</div>
+</div>
+<p>The accuracy of XGBost model on the training data is 0.9027778. This means that ourr model correctly classified about 90.28% of the instances in the training dataset.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb145"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb145-1"><a href="#cb145-1" aria-hidden="true" tabindex="-1"></a>pred.y <span class="ot">=</span> <span class="fu">predict</span>(model.xgb, pred.test.gbm)</span>
+<span id="cb145-2"><a href="#cb145-2" aria-hidden="true" tabindex="-1"></a>prediction <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(pred.y <span class="sc">&gt;</span> <span class="fl">0.5</span>)</span>
+<span id="cb145-3"><a href="#cb145-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">head</span>(prediction))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0 0 0 0 1 1</code></pre>
+</div>
+</div>
+<p>In the above code, we have make predictions on the test data. The predictions are then thresholded at 0.5 to convert the predicted probabilities into binary predictions.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb147"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb147-1"><a href="#cb147-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Measure prediction accuracy on test data</span></span>
+<span id="cb147-2"><a href="#cb147-2" aria-hidden="true" tabindex="-1"></a>(tab1<span class="ot">&lt;-</span><span class="fu">table</span>(kyphosis.test.gbm,prediction))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 prediction
+kyphosis.test.gbm 0 1
+                0 6 1
+                1 1 1</code></pre>
+</div>
+</div>
+<p>In the above is the confusion matrix of the testing data. We can see that there are 6 true negative and 1 true positive. For the false negative and false positive are both 1 respectively.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb149"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb149-1"><a href="#cb149-1" aria-hidden="true" tabindex="-1"></a>b_gbm <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(pred.y <span class="sc">&gt;</span> <span class="fl">0.5</span>,<span class="dv">1</span>,<span class="dv">0</span>)</span>
+<span id="cb149-2"><a href="#cb149-2" aria-hidden="true" tabindex="-1"></a>(cm.y <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(<span class="at">reference=</span><span class="fu">as.factor</span>(kyphosis.test<span class="sc">$</span>Kyphosis), </span>
+<span id="cb149-3"><a href="#cb149-3" aria-hidden="true" tabindex="-1"></a><span class="at">data=</span><span class="fu">as.factor</span>(b_gbm), <span class="at">mode=</span><span class="st">"everything"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confusion Matrix and Statistics
+
+          Reference
+Prediction 0 1
+         0 6 1
+         1 1 1
+                                          
+               Accuracy : 0.7778          
+                 95% CI : (0.3999, 0.9719)
+    No Information Rate : 0.7778          
+    P-Value [Acc &gt; NIR] : 0.6781          
+                                          
+                  Kappa : 0.3571          
+                                          
+ Mcnemar's Test P-Value : 1.0000          
+                                          
+            Sensitivity : 0.8571          
+            Specificity : 0.5000          
+         Pos Pred Value : 0.8571          
+         Neg Pred Value : 0.5000          
+              Precision : 0.8571          
+                 Recall : 0.8571          
+                     F1 : 0.8571          
+             Prevalence : 0.7778          
+         Detection Rate : 0.6667          
+   Detection Prevalence : 0.7778          
+      Balanced Accuracy : 0.6786          
+                                          
+       'Positive' Class : 0               
+                                          </code></pre>
+</div>
+</div>
+<p>About the accuracy of the model, it measures the proportion of correct predictions out of all predictions. It is 77.78%, the model correctly predicted 77.78% of the cases. The sensitivity is 85.61% and the specificity is 50%. An F1 score of 0.8571 indicates a good balance between precision and recall. Overall, the model appears to perform resonably well that with a high sensitivity and specificity, a fairly high accuracy 77.78%.</p>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
